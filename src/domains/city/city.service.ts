@@ -39,8 +39,21 @@ export class CityService {
 
   async findAll() {
     try {
-      const result = await this.sqlConnection.query('SELECT * FROM cidades');
-      return result.recordset;
+      const result = await this.sqlConnection.query(
+        'SELECT * FROM cidades',
+      );
+
+      const data = await Promise.all(result.recordset?.map(async (c) => {
+        const state = await this.sqlConnection.query(
+          `SELECT * FROM estados WHERE estado_ID = ${c.estado_ID}`,
+        );
+
+        if (state) {
+          const s = state.recordset[0];
+          return {...c, estado: { estado_ID: s.estado_ID, estado: s.estado } };
+        } else return c
+      }))
+      return data;
     } catch(err) {
       return err
     }
@@ -52,14 +65,22 @@ export class CityService {
         `SELECT * FROM cidades WHERE cidade_ID = ${id}`,
       );
 
-      if (result.recordset.length === 0) {
-        throw new NotFoundException('Cidade não encontrado'); // Lança exceção se não encontrar
+      const state = await this.sqlConnection.query(
+        `SELECT * FROM estados WHERE estado_ID = ${result.recordset[0].estado_ID}`,
+      );
+      const s = state.recordset[0];
+
+      if (result.recordset.length > 0) {
+        const city = result.recordset[0]; // Recupera o primeiro resultado (deve ser único)
+        return { ...city, estado: { estado_ID: s.estado_ID, estado: s.estado } };
+      } else {
+        return { error: 'Estado não encontrado' }; // Se o estado não for encontrado
       }
-      return result.recordset[0];
     } catch (err) {
       return err; // Retorna o erro, caso ocorra
     }
   }
+  // throw new NotFoundException('Cidade não encontrado');
 
   async update(id: number, updateCityDto: UpdateCityDto) {
     const { estado_ID, cidade, ddd, ativo} = updateCityDto;
@@ -101,7 +122,7 @@ export class CityService {
 
       // Verifica se alguma linha foi afetada
       if (deleteResult.recordset[0].rowsAffected === 0) {
-        throw new NotFoundException('estado não encontrado para exclusão'); // Se nenhuma linha foi deletada
+        throw new NotFoundException('cidade não encontrada para exclusão'); // Se nenhuma linha foi deletada
       }
 
       return {
