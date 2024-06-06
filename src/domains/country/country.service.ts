@@ -21,10 +21,10 @@ export class CountryService {
         .input('ddi', sql.VarChar(3), ddi)
         .input('sigla', sql.VarChar(3), sigla)
         .input('ativo', sql.Bit, ativo)
-        .input('data_cadastro', sql.DateTime, now)
-        .input('data_ult_alt', sql.DateTime, now).query`
-        INSERT INTO paises (pais, ddi, sigla, ativo, data_cadastro, data_ult_alt)
-        VALUES (@pais, @ddi, @sigla, @ativo, @data_cadastro, @data_ult_alt)
+        .input('dtCadastro', sql.DateTime, now)
+        .input('dtUltAlt', sql.DateTime, now).query`
+        INSERT INTO paises (pais, ddi, sigla, ativo, dtCadastro, dtUltAlt)
+        VALUES (@pais, @ddi, @sigla, @ativo, @dtCadastro, @dtUltAlt)
       `;
       return {
         message: 'Criado com sucesso!',
@@ -46,7 +46,7 @@ export class CountryService {
   async findOne(id: number) {
     try {
       const result = await this.sqlConnection.query(
-        `SELECT * FROM paises WHERE pais_ID = ${id}`,
+        `SELECT * FROM paises WHERE id = ${id}`,
       );
 
       if (result.recordset.length === 0) {
@@ -61,7 +61,7 @@ export class CountryService {
   async update(id: number, updateCountryDto: UpdateCountryDto) {
     const { pais, ddi, sigla, ativo } = updateCountryDto;
     const now = new Date(); // Data de última alteração
-
+    console.log(id, updateCountryDto)
     try {
       const updateResult = await this.sqlConnection
         .request() // Cria uma nova requisição
@@ -70,16 +70,16 @@ export class CountryService {
         .input('ddi', sql.VarChar(3), ddi)
         .input('sigla', sql.VarChar(3), sigla)
         .input('ativo', sql.BIT, ativo)
-        .input('data_ult_alt', sql.DateTime, now) // Data da última alteração
+        .input('dtUltAlt', sql.DateTime, now) // Data da última alteração
         .query(
           `UPDATE paises 
-           SET pais = @pais, ddi = @ddi, sigla = @sigla, ativo = @ativo, data_ult_alt = @data_ult_alt 
-           WHERE pais_ID = @id; SELECT @@ROWCOUNT AS rowsAffected`, // Verificar se a atualização foi bem-sucedida
+           SET pais = @pais, ddi = @ddi, sigla = @sigla, ativo = @ativo, dtUltAlt = @dtUltAlt 
+           WHERE id = @id; SELECT @@ROWCOUNT AS rowsAffected`, // Verificar se a atualização foi bem-sucedida
         );
 
       // Verifica se alguma linha foi atualizada
       if (updateResult.recordset[0].rowsAffected === 0) {
-        throw new NotFoundException('País não encontrado para atualização'); // Se nenhuma linha foi atualizada
+        throw new NotFoundException('País não encontrado para atualização' + id); // Se nenhuma linha foi atualizada
       }
 
       return {
@@ -96,7 +96,7 @@ export class CountryService {
       const deleteResult = await this.sqlConnection
         .request()
         .query(
-          `DELETE FROM paises WHERE pais_ID = ${id}; SELECT @@ROWCOUNT AS rowsAffected`,
+          `DELETE FROM paises WHERE id = ${id}; SELECT @@ROWCOUNT AS rowsAffected`,
         ); // Consulta para deletar pelo ID e verificar linhas afetadas
 
       // Verifica se alguma linha foi afetada

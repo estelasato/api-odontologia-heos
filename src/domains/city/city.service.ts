@@ -11,21 +11,21 @@ export class CityService {
   ) {}
 
   async create(createCityDto: CreateCityDto) {
-    const { estado_ID, cidade, ddd, ativo} = createCityDto;
+    const { idEstado, cidade, ddd, ativo} = createCityDto;
     const date = new Date();
 
     try {
       await this.sqlConnection
       .request()
-      .input('estado_ID', sql.Int, estado_ID)
+      .input('idEstado', sql.Int, idEstado)
       .input('cidade', sql.VarChar(56), cidade)
       .input('ddd', sql.VarChar(2), ddd)
       .input('ativo', sql.Bit, ativo)
-      .input('data_cadastro', date)
-      .input('data_ult_alt', date)
+      .input('dtCadastro', date)
+      .input('dtUltAlt', date)
       .query`
-        INSERT INTO cidades (estado_ID, cidade, ddd, ativo, data_cadastro, data_ult_alt)
-        VALUES (@estado_ID, @cidade, @ddd, @ativo, @data_cadastro, @data_ult_alt)
+        INSERT INTO cidades (idEstado, cidade, ddd, ativo, dtCadastro, dtUltAlt)
+        VALUES (@idEstado, @cidade, @ddd, @ativo, @dtCadastro, @dtUltAlt)
       `;
 
       return {
@@ -45,12 +45,12 @@ export class CityService {
 
       const data = await Promise.all(result.recordset?.map(async (c) => {
         const state = await this.sqlConnection.query(
-          `SELECT * FROM estados WHERE estado_ID = ${c.estado_ID}`,
+          `SELECT * FROM estados WHERE id = ${c.idEstado}`,
         );
 
         if (state) {
           const s = state.recordset[0];
-          return {...c, estado: { estado_ID: s.estado_ID, estado: s.estado } };
+          return {...c, estado: { id: s.idEstado, estado: s.estado } };
         } else return c
       }))
       return data;
@@ -62,17 +62,17 @@ export class CityService {
   async findOne(id: number) {
     try {
       const result = await this.sqlConnection.query(
-        `SELECT * FROM cidades WHERE cidade_ID = ${id}`,
+        `SELECT * FROM cidades WHERE id = ${id}`,
       );
 
       const state = await this.sqlConnection.query(
-        `SELECT * FROM estados WHERE estado_ID = ${result.recordset[0].estado_ID}`,
+        `SELECT * FROM estados WHERE idEstado = ${result.recordset[0].idEstado}`,
       );
       const s = state.recordset[0];
 
       if (result.recordset.length > 0) {
         const city = result.recordset[0]; // Recupera o primeiro resultado (deve ser único)
-        return { ...city, estado: { estado_ID: s.estado_ID, estado: s.estado } };
+        return { ...city, estado: { id: s.idEstado, estado: s.estado } };
       } else {
         return { error: 'Estado não encontrado' }; // Se o estado não for encontrado
       }
@@ -83,21 +83,21 @@ export class CityService {
   // throw new NotFoundException('Cidade não encontrado');
 
   async update(id: number, updateCityDto: UpdateCityDto) {
-    const { estado_ID, cidade, ddd, ativo} = updateCityDto;
+    const { idEstado, cidade, ddd, ativo} = updateCityDto;
     const date = new Date();
 
     try {
       const updateResult = await this.sqlConnection
       .request()
-      .input('estado_ID', sql.Int, estado_ID)
+      .input('idEstado', sql.Int, idEstado)
       .input('cidade', sql.VarChar(56), cidade)
       .input('ddd', sql.VarChar(2), ddd)
       .input('ativo', sql.Bit, ativo)
-      .input('data_ult_alt', date)
+      .input('dtUltAlt', date)
       .query`
         UPDATE cidades
-        SET estado_ID = @estado_ID, cidade = @cidade, ddd = @ddd, ativo = @ativo, data_ult_alt = @data_ult_alt
-        WHERE cidade_ID = ${id}; SELECT @@ROWCOUNT AS rowsAffected;
+        SET idEstado = @idEstado, cidade = @cidade, ddd = @ddd, ativo = @ativo, dtUltAlt = @dtUltAlt
+        WHERE id = ${id}; SELECT @@ROWCOUNT AS rowsAffected;
       `;
 
       if (updateResult.rowsAffected[0] === 0) {
@@ -117,7 +117,7 @@ export class CityService {
       const deleteResult = await this.sqlConnection
         .request()
         .query(
-          `DELETE FROM cidades WHERE cidade_ID = ${id}; SELECT @@ROWCOUNT AS rowsAffected`,
+          `DELETE FROM cidades WHERE id = ${id}; SELECT @@ROWCOUNT AS rowsAffected`,
         ); // Consulta para deletar pelo ID e verificar linhas afetadas
 
       // Verifica se alguma linha foi afetada

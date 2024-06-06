@@ -25,11 +25,11 @@ export class CreateCountryDto {
 
   // @ApiProperty({ type: String, required: false })
   // // @IsNotEmpty({ message: 'O campo sigla é obrigatório.' })
-  // @IsDate({ message: 'O campo data_cadastro é inválido.' })
-  // data_cadastro: Date
+  // @IsDate({ message: 'O campo dtCadastro é inválido.' })
+  // dtCadastro: Date
 
   // @ApiProperty({ type: String, required: false })
   // // @IsNotEmpty({ message: 'O campo sigla é obrigatório.' })
-  // @IsDate({ message: 'O campo data_ult_alt é inválido.' })
-  // data_ult_alt: Date
+  // @IsDate({ message: 'O campo dtUltAlt é inválido.' })
+  // dtUltAlt: Date
 }
