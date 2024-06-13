@@ -70,17 +70,11 @@ export class StateService {
       const c = country.recordset[0];
 
       if (result.recordset.length > 0) {
-        const estado = result.recordset[0]; // Recupera o primeiro resultado (deve ser único)
-        return { ...estado, pais: { id: c.idPais, pais: c.pais } };
+        const state = result.recordset[0]; // Recupera o primeiro resultado (deve ser único)
+        return { ...state, pais: { id: c.idPais, pais: c.pais } };
       } else {
         return { error: 'Estado não encontrado' }; // Se o estado não for encontrado
       }
-
-      // if (result.recordset.length === 0) {
-      //   throw new NotFoundException('Estado não encontrado'); // Lança exceção se não encontrar
-      // }
-
-      // return result.recordset[0];
     } catch (err) {
       return err; // Retorna o erro, caso ocorra
     }

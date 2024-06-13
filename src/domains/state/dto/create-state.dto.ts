@@ -16,13 +16,3 @@ export class CreateStateDto {
   ativo: number
 
 }
-
-// idEstado int NOT NULL PRIMARY KEY IDENTITY,
-// idPais int NOT NULL,
-
-// estado VARCHAR(56) NOT NULL,
-// uf VARCHAR(2) NOT NULL,
-
-// ativo BIT NOT NULL,
-// dtCadastro DATETIME NOT NULL,
-// dtUltAlt DATETIME NOT NULL,
