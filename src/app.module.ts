@@ -7,8 +7,8 @@ import { StateController } from './domains/state/state.controller';
 import { StateService } from './domains/state/state.service';
 import { CityController } from './domains/city/city.controller';
 import { CityService } from './domains/city/city.service';
-import { EmployeeController } from './employee/employee.controller';
-import { EmployeeService } from './employee/employee.service';
+import { EmployeeController } from './domains/employee/employee.controller';
+import { EmployeeService } from './domains/employee/employee.service';
 
 @Module({
   imports: [DatabaseModule],
