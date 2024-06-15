@@ -1,7 +1,9 @@
-import { IsDateString, IsDecimal, IsNumber, IsOptional, IsString } from "class-validator";
-import { AddressDto, AddressType } from "src/shared/dto/address.dto";
+import { PartialType } from '@nestjs/mapped-types';
+import { CreatePatientDto } from './create-patient.dto';
+import { AddressDto, AddressType } from 'src/shared/dto/address.dto';
+import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class UpdateEmployeeDto extends AddressDto {
+export class UpdatePatientDto extends AddressDto {
   @IsOptional()  
   @IsString()
   nome?: string
@@ -36,22 +38,15 @@ export class UpdateEmployeeDto extends AddressDto {
 
   @IsOptional()
   @IsString()
-	cargo?: string
+	obs?: string
 
   @IsOptional()
-  @IsDecimal()
-  salario?: string
-
   @IsString()
-  pis?: string
+	profissao?: string
 
   @IsOptional()
-  @IsDateString()
-  dtAdmissao?: Date
-
-  @IsOptional()
-  @IsDateString()
-  dtDemissao?: Date
+  @IsString()
+	indicacao?: string
 
   @IsOptional()
   @IsNumber()
@@ -71,11 +66,11 @@ export class UpdateEmployee extends AddressType {
   celular?: string
   sexo?: string
   estCivil?: string
-  cargo?: string
-  salario?: any
-  pis?: string
-  dtAdmissao?: Date
-  dtDemissao?: Date
+  obs?: string
+  profissao?: string
+  indicacao?: string
   ativo?: number
   idCidade?: number
 }
+
+

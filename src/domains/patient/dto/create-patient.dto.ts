@@ -1,7 +1,7 @@
-import { IsDateString, IsDecimal, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { AddressDto, AddressType } from "src/shared/dto/address.dto";
+import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
+import { AddressDto, AddressType } from "src/shared/dto/address.dto"
 
-export class CreateEmployeeDto extends AddressDto{
+export class CreatePatientDto extends AddressDto{
   @IsNotEmpty({ message: 'O campo nome é obrigatório.' })
   @IsString()
   nome: string
@@ -33,21 +33,15 @@ export class CreateEmployeeDto extends AddressDto{
 
   @IsOptional()
   @IsString()
-	cargo: string
+	obs?: string
 
-  @IsDecimal()
-  salario: string
-
+  @IsOptional()
   @IsString()
-  pis: string
+	profissao?: string
 
   @IsOptional()
-  @IsDateString()
-  dtAdmissao?: Date
-
-  @IsOptional()
-  @IsDateString()
-  dtDemissao?: Date
+  @IsString()
+	indicacao?: string
 
   @IsNumber()
   ativo: number
@@ -57,7 +51,7 @@ export class CreateEmployeeDto extends AddressDto{
 	idCidade?: number
 }
 
-export class CreateEmployee extends AddressType{
+export class CreatePatient extends AddressType{
   nome: string
   cpf?: string
   rg?: string
@@ -66,11 +60,9 @@ export class CreateEmployee extends AddressType{
   celular: string
   sexo: string
   estCivil?: string
-  cargo: string
-  salario: string
-  pis: string
-  dtAdmissao?: Date
-  dtDemissao?: Date
+  obs?: string
+  profissao?: string
+  indicacao?: string
   ativo: number
   idCidade?: number
 }

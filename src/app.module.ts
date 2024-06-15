@@ -9,11 +9,44 @@ import { CityController } from './domains/city/city.controller';
 import { CityService } from './domains/city/city.service';
 import { EmployeeController } from './domains/employee/employee.controller';
 import { EmployeeService } from './domains/employee/employee.service';
+import { IllnessController } from './domains/illness/illness.controller';
+import { IllnessService } from './domains/illness/illness.service';
+import { MedicationController } from './domains/medication/medication.controller';
+import { HabitController } from './domains/habit/habit.controller';
+import { AllergyController } from './domains/allergy/allergy.controller';
+import { MedicationService } from './domains/medication/medication.service';
+import { HabitService } from './domains/habit/habit.service';
+import { AllergyService } from './domains/allergy/allergy.service';
+import { PatientController } from './domains/patient/patient.controller';
+import { PatientService } from './domains/patient/patient.service';
+import { ProfessionalController } from './domains/professional/professional.controller';
+import { ProfessionalService } from './domains/professional/professional.service';
 
 @Module({
   imports: [DatabaseModule],
-  controllers: [CountryController, StateController, CityController, EmployeeController],
-  providers: [CountryService, StateService, CityService, EmployeeService],
-
+  controllers: [
+    CountryController,
+    StateController,
+    CityController,
+    EmployeeController,
+    IllnessController,
+    MedicationController,
+    HabitController,
+    AllergyController,
+    PatientController,
+    ProfessionalController,
+  ],
+  providers: [
+    CountryService,
+    StateService,
+    CityService,
+    EmployeeService,
+    IllnessService,
+    MedicationService,
+    HabitService,
+    AllergyService,
+    PatientService,
+    ProfessionalService,
+  ],
 })
 export class AppModule {}

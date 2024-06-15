@@ -61,7 +61,7 @@ export class CountryService {
   async update(id: number, updateCountryDto: UpdateCountryDto) {
     const { pais, ddi, sigla, ativo } = updateCountryDto;
     const now = new Date(); // Data de última alteração
-    console.log(id, updateCountryDto)
+
     try {
       const updateResult = await this.sqlConnection
         .request() // Cria uma nova requisição

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { CityService } from './city.service';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
@@ -15,6 +15,11 @@ export class CityController {
   @Get()
   findAllCities() {
     return this.cityService.findAll();
+  }
+
+  @Get('/cep/:id')
+  findCEP(@Param('id') id: string) {
+    return this.cityService.findCEP(+id);
   }
 
   @Get(':id')

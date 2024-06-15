@@ -11,90 +11,103 @@ export class CityService {
   ) {}
 
   async create(createCityDto: CreateCityDto) {
-    const { idEstado, cidade, ddd, ativo} = createCityDto;
+    const { idEstado, cidade, ddd, ativo } = createCityDto;
     const date = new Date();
 
     try {
       await this.sqlConnection
-      .request()
-      .input('idEstado', sql.Int, idEstado)
-      .input('cidade', sql.VarChar(56), cidade)
-      .input('ddd', sql.VarChar(2), ddd)
-      .input('ativo', sql.Bit, ativo)
-      .input('dtCadastro', date)
-      .input('dtUltAlt', date)
-      .query`
+        .request()
+        .input('idEstado', sql.Int, idEstado)
+        .input('cidade', sql.VarChar(56), cidade)
+        .input('ddd', sql.VarChar(2), ddd)
+        .input('ativo', sql.Bit, ativo)
+        .input('dtCadastro', date)
+        .input('dtUltAlt', date).query`
         INSERT INTO cidades (idEstado, cidade, ddd, ativo, dtCadastro, dtUltAlt)
         VALUES (@idEstado, @cidade, @ddd, @ativo, @dtCadastro, @dtUltAlt)
       `;
 
       return {
-        message: 'Cidade criada com sucesso!'
-      }
-    } catch(err) {
-      return err
-
+        message: 'Cidade criada com sucesso!',
+      };
+    } catch (err) {
+      return err;
     }
   }
 
   async findAll() {
     try {
-      const result = await this.sqlConnection.query(
-        'SELECT * FROM cidades',
+      const result = await this.sqlConnection.query('SELECT * FROM cidades');
+
+      const data = await Promise.all(
+        result.recordset?.map(async (c) => {
+          const state = await this.sqlConnection.query(
+            `SELECT * FROM estados WHERE id = ${c.idEstado}`,
+          );
+
+          if (state) {
+            const s = state.recordset[0];
+            return { ...c, estado: { id: s.idEstado, estado: s.estado } };
+          } else return c;
+        }),
       );
-
-      const data = await Promise.all(result.recordset?.map(async (c) => {
-        const state = await this.sqlConnection.query(
-          `SELECT * FROM estados WHERE id = ${c.idEstado}`,
-        );
-
-        if (state) {
-          const s = state.recordset[0];
-          return {...c, estado: { id: s.idEstado, estado: s.estado } };
-        } else return c
-      }))
       return data;
-    } catch(err) {
-      return err
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async findCEP(idCity: number) {
+    try {
+      const result = await this.sqlConnection.query(`
+      SELECT cidades.cidade AS cidade, estados.uf AS uf, paises.pais AS pais
+      FROM cidades
+      JOIN estados ON cidades.idEstado = estados.id
+      JOIN paises ON estados.idPais = paises.id
+      WHERE cidades.id = ${idCity}
+      `);
+      return result.recordset[0];
+    } catch (err) {
+      return err;
     }
   }
 
   async findOne(id: number) {
     try {
-      const result = await this.sqlConnection.query(
-        `SELECT * FROM cidades WHERE id = ${id}`,
+      const r = await this.sqlConnection.query(
+        `
+        SELECT cidades.*, estados.uf AS uf, paises.pais AS pais
+        FROM cidades
+        JOIN estados ON cidades.idEstado = estados.id
+        JOIN paises ON estados.idPais = paises.id
+        WHERE cidades.id = ${id}
+        `,
       );
 
-      const state = await this.sqlConnection.query(
-        `SELECT * FROM estados WHERE idEstado = ${result.recordset[0].idEstado}`,
-      );
-      const s = state.recordset[0];
-
-      if (result.recordset.length > 0) {
-        const city = result.recordset[0]; // Recupera o primeiro resultado (deve ser único)
-        return { ...city, estado: { id: s.idEstado, estado: s.estado } };
+      if (r.recordset.length > 0) { 
+        return r.recordset[0];
       } else {
-        return { error: 'Estado não encontrado' }; // Se o estado não for encontrado
+        return { error: 'Cidade não encontrada' };
       }
+
     } catch (err) {
-      return err; // Retorna o erro, caso ocorra
+      return err; 
     }
   }
-  // throw new NotFoundException('Cidade não encontrado');
+
 
   async update(id: number, updateCityDto: UpdateCityDto) {
-    const { idEstado, cidade, ddd, ativo} = updateCityDto;
+    const { idEstado, cidade, ddd, ativo } = updateCityDto;
     const date = new Date();
 
     try {
       const updateResult = await this.sqlConnection
-      .request()
-      .input('idEstado', sql.Int, idEstado)
-      .input('cidade', sql.VarChar(56), cidade)
-      .input('ddd', sql.VarChar(2), ddd)
-      .input('ativo', sql.Bit, ativo)
-      .input('dtUltAlt', date)
-      .query`
+        .request()
+        .input('idEstado', sql.Int, idEstado)
+        .input('cidade', sql.VarChar(56), cidade)
+        .input('ddd', sql.VarChar(2), ddd)
+        .input('ativo', sql.Bit, ativo)
+        .input('dtUltAlt', date).query`
         UPDATE cidades
         SET idEstado = @idEstado, cidade = @cidade, ddd = @ddd, ativo = @ativo, dtUltAlt = @dtUltAlt
         WHERE id = ${id}; SELECT @@ROWCOUNT AS rowsAffected;
@@ -105,10 +118,10 @@ export class CityService {
       }
 
       return {
-        message: 'Cidade atualizada com sucesso!'
-      }
-    } catch(err) {
-      return err
+        message: 'Cidade atualizada com sucesso!',
+      };
+    } catch (err) {
+      return err;
     }
   }
 

@@ -1,17 +1,20 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployee } from './dto/create-employee.dto';
-import { UpdateEmployee, UpdateEmployeeDto } from './dto/update-employee.dto';
+import { UpdateEmployee } from './dto/update-employee.dto';
 import * as sql from 'mssql';
+import { CityService } from '../city/city.service';
 
 @Injectable()
 export class EmployeeService {
   constructor(
     @Inject('SQL_CONNECTION')
     private readonly sqlConnection: sql.ConnectionPool,
+    private readonly cityService: CityService
   ) {}
 
   async create(data: CreateEmployee) {
-    const { nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, ativo, cargo, salario, pis, dtAdmissao, dtDemissao, idCidade} = data;
+    const { nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, ativo, cargo, salario, pis, dtAdmissao, dtDemissao,
+       cep, bairro, complemento, idCidade, logradouro, numero} = data;
     const date = new Date();
 
     try {
@@ -29,6 +32,11 @@ export class EmployeeService {
         .input('cargo', sql.VarChar(50), cargo)
         .input('salario', sql.Decimal(18, 2), salario)
         .input('pis', sql.VarChar(11), pis)
+        .input('cep', sql.VarChar(8), cep)
+        .input('logradouro', sql.VarChar(100), logradouro)
+        .input('bairro', sql.VarChar(100), bairro)
+        .input('numero', sql.Int, numero)
+        .input('complemento', sql.VarChar(100), complemento)
         .input('dtAdmissao', sql.Date, dtAdmissao)
         .input('dtDemissao', sql.Date, dtDemissao)
         .input('idCidade', sql.Int, idCidade)
@@ -65,18 +73,14 @@ export class EmployeeService {
 
   async findOne(id: number) {
     try {
-      const result = await sql.sqlConnection.query(
-        `select * from funcionarios where id = ${id}`
+      const r = await this.sqlConnection.query(
+        `SELECT * FROM funcionarios WHERE id = ${id}`,
       );
 
-      const city = await this.sqlConnection.query(
-        `select * from cidades where id = ${result.recordset[0].idCidade}`
-      )
+      const cep = await this.cityService.findCEP(r.recordset[0].idCidade);
 
-      const c = city.recordset[0];
-      
-      if (result.recordset.length > 0) {
-        return {...result.recordset[0], cidade: {id: c.idCidade, cidade: c.cidade}};
+      if (r.recordset.length > 0) {
+        return {...r.recordset[0], ...cep};
       } else {
         return { error: 'Funcionário não encontrado!'}
       }
