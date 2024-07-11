@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { BasicFormDto } from 'src/shared/dto/basicForm.dto';
 import * as sql from 'mssql';
 
@@ -20,26 +25,26 @@ export class MedicationService {
         .input('descricao', sql.VarChar, descricao)
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', sql.DateTime, now)
-        .input('dtUltAlt', sql.DateTime, now)
-        .query`
+        .input('dtUltAlt', sql.DateTime, now).query`
           INSERT INTO medicamentos (nome, descricao, ativo, dtCadastro, dtUltAlt)
           VALUES (@nome, @descricao, @ativo, @dtCadastro, @dtUltAlt)
         `;
-      console.log(result.recordset, 'aa');
       return {
         message: 'Criado com sucesso!',
       };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 
   async findAll() {
     try {
-      const result = await this.sqlConnection.query('select * from medicamentos');
+      const result = await this.sqlConnection.query(
+        'select * from medicamentos',
+      );
       return result.recordset;
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 
@@ -53,13 +58,13 @@ export class MedicationService {
         throw new NotFoundException('Medicamento não encontrada');
       }
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 
   async update(id: number, data: BasicFormDto) {
     const { nome, descricao, ativo } = data;
-    
+
     try {
       const now = new Date();
       const result = await this.sqlConnection
@@ -68,8 +73,7 @@ export class MedicationService {
         .input('nome', sql.VarChar(20), nome)
         .input('descricao', sql.VarChar(100), descricao)
         .input('ativo', sql.Bit, ativo)
-        .input('dtUltAlt', sql.DateTime, now)
-        .query`
+        .input('dtUltAlt', sql.DateTime, now).query`
         UPDATE medicamentos 
         SET nome=@nome, descricao=@descricao, ativo=@ativo, dtUltAlt=@dtUltAlt 
         WHERE id=@id; SELECT @@ROWCOUNT AS ROWS;
@@ -81,22 +85,25 @@ export class MedicationService {
         return { error: 'Nenhum registro atualizado' };
       }
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 
   async remove(id: number) {
     try {
-      const result = await this.sqlConnection.request().input('id', sql.Int, id)
-        .query`
-        delete from medicamentos where id=@id; select @@rowcount as rows;
-      `;
-
-      if (result.recorset[0].rows === 0) {
-        throw new NotFoundException('Medicamento não encontrada');
+      const result = await this.sqlConnection
+        .request()
+        .query(
+          `delete from medicamentos where id = ${id}; SELECT @@ROWCOUNT AS rowsAffected`,
+        );
+      if (result.recordset[0].rowsAffected === 0) {
+        throw new NotFoundException('medicamento não encontrado para exclusão');
       }
+      return {
+        message: 'medicamento excluído com sucesso!',
+      };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 }

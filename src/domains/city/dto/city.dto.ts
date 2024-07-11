@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 
-export class CreateCityDto {
+export class CityDto {
   @IsNotEmpty({ message: 'O campo idEstado é obrigatório.' })
   idEstado: number;
 
@@ -8,8 +8,15 @@ export class CreateCityDto {
   cidade: string;
   
   @IsOptional()
-  ddd: string;
+  ddd?: string;
 
   @IsNumber()
   ativo: number;
+}
+
+export class City {
+  idEstado: number
+  cidade: string
+  ddd?: string
+  ativo: number
 }

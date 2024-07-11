@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployee } from './dto/create-employee.dto';
 import { UpdateEmployee } from './dto/update-employee.dto';
 import * as sql from 'mssql';
@@ -18,7 +18,21 @@ export class EmployeeService {
     const date = new Date();
 
     try {
-      await this.sqlConnection
+        // // Verifica duplicidade de CPF, Email e PIS
+        // const existingEmployee = await this.sqlConnection
+        //     .request()
+        //     .input('cpf', sql.VarChar(11), cpf)
+        //     .input('email', sql.VarChar(100), email)
+        //     .input('pis', sql.VarChar(11), pis)
+        //     .query(`
+        //         SELECT 1 FROM funcionarios 
+        //         WHERE cpf = @cpf OR email = @email OR pis = @pis
+        //     `);
+        
+        // if (existingEmployee.recordset.length > 0) {
+        //     throw new BadRequestException(`Funcionário com CPF, Email ou PIS já existe.`);
+        // }
+      const result = await this.sqlConnection
         .request()
         .input('nome', sql.VarChar(50), nome)
         .input('cpf', sql.VarChar(11), cpf)
@@ -42,12 +56,15 @@ export class EmployeeService {
         .input('idCidade', sql.Int, idCidade)
         .input('dtCadastro', date)
         .input('dtUltAlt', date).query`
-          insert into funcionarios (nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, ativo, cargo, salario, pis, dtAdmissao, dtDemissao, idCidade, dtCadastro, dtUltAlt)
+          INSERT INTO funcionarios (nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, ativo, cargo, salario, pis, dtAdmissao, dtDemissao, idCidade, dtCadastro, dtUltAlt)
+
           values (@nome, @cpf, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @ativo, @cargo, @salario, @pis, @dtAdmissao, @dtDemissao, @idCidade, @dtCadastro, @dtUltAlt)
         `;
+        console.log(result)
+
         return {message: 'Funcionário criado com sucesso!'}
-    } catch (error) {
-      return error;
+    } catch (err) {
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 
@@ -67,7 +84,7 @@ export class EmployeeService {
       }))
       return data
     } catch(err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 
@@ -123,14 +140,14 @@ export class EmployeeService {
           `);
 
           if (updateResult.recordset[0].rowsAffected === 0) {
-            throw new NotFoundException('Funcionário não encontrado para atualização'); // Se nenhuma linha foi atualizada
+            throw new NotFoundException('Funcionário não encontrado para atualização'); 
           }
 
           return {
             message: 'Funcionário atualizado com sucesso!',
           };
     } catch (error) {
-      return error;
+      throw new BadRequestException(`Ocorreu um errro: ${error.message}`);
     }
   }
 
@@ -149,7 +166,7 @@ export class EmployeeService {
         message: 'Funcionário excluído com sucesso!',
       }
     } catch(err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 }

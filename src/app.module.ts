@@ -21,6 +21,8 @@ import { PatientController } from './domains/patient/patient.controller';
 import { PatientService } from './domains/patient/patient.service';
 import { ProfessionalController } from './domains/professional/professional.controller';
 import { ProfessionalService } from './domains/professional/professional.service';
+import { ResponsiblePartyController } from './domains/responsible-party/responsible-party.controller';
+import { ResponsiblePartyService } from './domains/responsible-party/responsible-party.service';
 
 @Module({
   imports: [DatabaseModule],
@@ -35,6 +37,7 @@ import { ProfessionalService } from './domains/professional/professional.service
     AllergyController,
     PatientController,
     ProfessionalController,
+    ResponsiblePartyController,
   ],
   providers: [
     CountryService,
@@ -47,6 +50,7 @@ import { ProfessionalService } from './domains/professional/professional.service
     AllergyService,
     PatientService,
     ProfessionalService,
+    ResponsiblePartyService,
   ],
 })
 export class AppModule {}

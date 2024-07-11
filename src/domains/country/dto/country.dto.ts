@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-export class UpdateCountryDto {
-  @ApiProperty({ type: String, required: false })
-  // @IsNotEmpty({ message: 'O campo nome é obrigatório.' })
-  @IsString({ message: 'O campo pais é inválido.' })
+export class CountryDto {
+  @ApiProperty({ type: String, required: true })
+  @IsNotEmpty({ message: 'O campo nome é obrigatório.' })
+  @IsString({ message: 'O campo nome é inválido.' })
   pais: string
 
   @ApiProperty({ type: String, required: false })
@@ -19,5 +19,11 @@ export class UpdateCountryDto {
 
   @IsNumber()
   ativo: number
+}
 
+export class Country {
+  pais: string
+  ddi?: string
+  sigla?: string
+  ativo: number
 }

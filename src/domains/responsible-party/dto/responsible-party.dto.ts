@@ -1,7 +1,7 @@
 import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
-import { AddressDto, AddressType } from "src/shared/dto/address.dto"
+import { AddressDto, AddressType } from "src/shared/dto/address.dto";
 
-export class CreatePatientDto extends AddressDto{
+export class ResponsibleDto extends AddressDto {
   @IsNotEmpty({ message: 'O campo nome é obrigatório.' })
   @IsString()
   nome: string
@@ -14,8 +14,9 @@ export class CreatePatientDto extends AddressDto{
   @IsString()
   rg?: string
 
+  @IsOptional()
   @IsDateString()
-  dtNascimento: Date
+  dtNascimento?: Date
 
   @IsOptional()
   @IsString()
@@ -24,8 +25,9 @@ export class CreatePatientDto extends AddressDto{
   @IsString()
 	celular: string
 
+  @IsOptional()
   @IsString()
-	sexo: string
+	sexo?: string
 
   @IsOptional()
   @IsString()
@@ -33,15 +35,7 @@ export class CreatePatientDto extends AddressDto{
 
   @IsOptional()
   @IsString()
-	obs?: string
-
-  @IsOptional()
-  @IsString()
-	profissao?: string
-
-  @IsOptional()
-  @IsString()
-	indicacao?: string
+  profissao?: string
 
   @IsNumber()
   ativo: number
@@ -51,18 +45,16 @@ export class CreatePatientDto extends AddressDto{
 	idCidade?: number
 }
 
-export class CreatePatient extends AddressType{
+export class Responsible extends AddressType{
   nome: string
   cpf?: string
   rg?: string
-  dtNascimento: Date
+  dtNascimento?: Date
   email?: string
   celular: string
-  sexo: string
+  sexo?: string
   estCivil?: string
-  obs?: string
   profissao?: string
-  indicacao?: string
   ativo: number
   idCidade?: number
 }

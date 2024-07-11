@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import * as sql from 'mssql';
 import { BasicFormDto } from 'src/shared/dto/basicForm.dto';
 
@@ -25,12 +25,11 @@ export class IllnessService {
           INSERT INTO doencas (nome, descricao, ativo, dtCadastro, dtUltAlt)
           VALUES (@nome, @descricao, @ativo, @dtCadastro, @dtUltAlt)
         `;
-      console.log(result.recordset, 'aa');
       return {
         message: 'Criado com sucesso!',
       };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
@@ -39,7 +38,7 @@ export class IllnessService {
       const result = await this.sqlConnection.query('select * from doencas');
       return result.recordset;
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
@@ -53,7 +52,7 @@ export class IllnessService {
         throw new NotFoundException('Doença não encontrada');
       }
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
@@ -81,22 +80,27 @@ export class IllnessService {
         return { error: 'Nenhum registro atualizado' };
       }
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
   async remove(id: number) {
     try {
-      const result = await this.sqlConnection.request().input('id', sql.Int, id)
-        .query`
-        delete from doencas where id=@id; select @@rowcount as rows;
-      `;
+      const result = await this.sqlConnection
+      .request()
+      .query(
+        `delete from doencas where id = ${id}; SELECT @@ROWCOUNT AS rowsAffected`,
+      );
+      console.log(result)
 
-      if (result.recorset[0].rows === 0) {
-        throw new NotFoundException('Doença não encontrada');
+      if (result.recordset[0].rowsAffected === 0) {
+        throw new NotFoundException('Item não encontrado para exclusão');
       }
+      return {
+        message: 'Item excluído com sucesso!',
+      };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 }

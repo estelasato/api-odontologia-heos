@@ -1,6 +1,5 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCityDto } from './dto/create-city.dto';
-import { UpdateCityDto } from './dto/update-city.dto';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { City } from './dto/city.dto';
 import * as sql from 'mssql';
 
 @Injectable()
@@ -10,7 +9,7 @@ export class CityService {
     private readonly sqlConnection: sql.ConnectionPool,
   ) {}
 
-  async create(createCityDto: CreateCityDto) {
+  async create(createCityDto: City) {
     const { idEstado, cidade, ddd, ativo } = createCityDto;
     const date = new Date();
 
@@ -31,7 +30,7 @@ export class CityService {
         message: 'Cidade criada com sucesso!',
       };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
@@ -53,7 +52,7 @@ export class CityService {
       );
       return data;
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
@@ -68,7 +67,7 @@ export class CityService {
       `);
       return result.recordset[0];
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
@@ -91,12 +90,12 @@ export class CityService {
       }
 
     } catch (err) {
-      return err; 
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);; 
     }
   }
 
 
-  async update(id: number, updateCityDto: UpdateCityDto) {
+  async update(id: number, updateCityDto: City) {
     const { idEstado, cidade, ddd, ativo } = updateCityDto;
     const date = new Date();
 
@@ -121,7 +120,7 @@ export class CityService {
         message: 'Cidade atualizada com sucesso!',
       };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 

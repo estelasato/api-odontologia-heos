@@ -1,14 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { StateService } from './state.service';
-import { CreateStateDto } from './dto/create-state.dto';
-import { UpdateStateDto } from './dto/update-state.dto';
+import { StateDto } from './dto/state.dto';
 
 @Controller('state')
 export class StateController {
   constructor(private readonly stateService: StateService) {}
 
   @Post()
-  createState(@Body() createStateDto: CreateStateDto) {
+  createState(@Body() createStateDto: StateDto) {
     return this.stateService.create(createStateDto);
   }
 
@@ -23,7 +22,7 @@ export class StateController {
   }
 
   @Put(':id')
-  updateState(@Param('id') id: string, @Body() updateStateDto: UpdateStateDto) {
+  updateState(@Param('id') id: string, @Body() updateStateDto: StateDto) {
     return this.stateService.update(+id, updateStateDto);
   }
 

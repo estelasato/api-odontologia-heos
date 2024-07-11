@@ -1,14 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { ProfessionalService } from './professional.service';
-import { CreateProfessionalDto } from './dto/create-professional.dto';
-import { UpdateProfessionalDto } from './dto/update-professional.dto';
+import { ProfessionalDto } from './dto/professional.dto';
 
 @Controller('professional')
 export class ProfessionalController {
   constructor(private readonly professionalService: ProfessionalService) {}
 
   @Post()
-  create(@Body() createProfessionalDto: CreateProfessionalDto) {
+  create(@Body() createProfessionalDto: ProfessionalDto) {
     return this.professionalService.create(createProfessionalDto);
   }
 
@@ -18,17 +17,17 @@ export class ProfessionalController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.professionalService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfessionalDto: UpdateProfessionalDto) {
+  @Put(':id')
+  update(@Param('id') id: number, @Body() updateProfessionalDto: ProfessionalDto) {
     return this.professionalService.update(+id, updateProfessionalDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.professionalService.remove(+id);
   }
 }

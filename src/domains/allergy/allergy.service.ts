@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { BasicFormDto } from 'src/shared/dto/basicForm.dto';
 import * as sql from 'mssql';
 
@@ -20,16 +25,15 @@ export class AllergyService {
         .input('descricao', sql.VarChar, descricao)
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', sql.DateTime, now)
-        .input('dtUltAlt', sql.DateTime, now)
-        .query`
+        .input('dtUltAlt', sql.DateTime, now).query`
           INSERT INTO alergias (nome, descricao, ativo, dtCadastro, dtUltAlt)
-          VALUES (@nome, @descricao, @ativo, @dtCadastro, @dtUltAlt)
+          VALUES (@nome, @descricao, @ativo, @dtCadastro, @dtUltAlt);
         `;
       return {
         message: 'Criado com sucesso!',
       };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um erro:  ${err.message}`);
     }
   }
 
@@ -38,7 +42,7 @@ export class AllergyService {
       const result = await this.sqlConnection.query('select * from alergias');
       return result.recordset;
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um erro:  ${err.message}`);
     }
   }
 
@@ -52,13 +56,13 @@ export class AllergyService {
         throw new NotFoundException('Alergia não encontrada');
       }
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um erro:  ${err.message}`);
     }
   }
 
   async update(id: number, data: BasicFormDto) {
     const { nome, descricao, ativo } = data;
-    
+
     try {
       const now = new Date();
       const result = await this.sqlConnection
@@ -67,8 +71,7 @@ export class AllergyService {
         .input('nome', sql.VarChar(20), nome)
         .input('descricao', sql.VarChar(100), descricao)
         .input('ativo', sql.Bit, ativo)
-        .input('dtUltAlt', sql.DateTime, now)
-        .query`
+        .input('dtUltAlt', sql.DateTime, now).query`
         UPDATE alergias 
         SET nome=@nome, descricao=@descricao, ativo=@ativo, dtUltAlt=@dtUltAlt 
         WHERE id=@id; SELECT @@ROWCOUNT AS ROWS;
@@ -80,22 +83,25 @@ export class AllergyService {
         return { error: 'Nenhum registro atualizado' };
       }
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um erro:  ${err.message}`);
     }
   }
 
   async remove(id: number) {
     try {
-      const result = await this.sqlConnection.request().input('id', sql.Int, id)
-        .query`
-        delete from alergias where id=@id; select @@rowcount as rows;
-      `;
-
-      if (result.recorset[0].rows === 0) {
-        throw new NotFoundException('Alergia não encontrada');
+      const result = await this.sqlConnection
+        .request()
+        .query(
+          `delete from alergias where id = ${id}; SELECT @@ROWCOUNT AS rowsAffected`,
+        );
+      if (result.recordset[0].rowsAffected === 0) {
+        throw new NotFoundException('alergia não encontrada para exclusão');
       }
+      return {
+        message: 'alergia excluída com sucesso!',
+      };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um erro:  ${err.message}`);
     }
   }
 }

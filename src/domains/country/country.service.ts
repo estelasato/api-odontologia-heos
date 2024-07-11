@@ -1,6 +1,5 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCountryDto } from './dto/create-country.dto';
-import { UpdateCountryDto } from './dto/update-country.dto';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Country, CountryDto } from './dto/country.dto';
 import * as sql from 'mssql';
 
 @Injectable()
@@ -10,7 +9,7 @@ export class CountryService {
     private readonly sqlConnection: sql.ConnectionPool,
   ) {}
 
-  async create(createCountryDto: CreateCountryDto) {
+  async create(createCountryDto: CountryDto) {
     const { pais, ddi, sigla, ativo } = createCountryDto;
     const now = new Date();
 
@@ -30,7 +29,7 @@ export class CountryService {
         message: 'Criado com sucesso!',
       };
     } catch (err) {
-      return err; // Retorna o erro, caso ocorra
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`); // Retorna o erro, caso ocorra
     }
   }
 
@@ -39,7 +38,7 @@ export class CountryService {
       const result = await this.sqlConnection.query('SELECT * FROM paises');
       return result.recordset; // Retorna os resultados da consulta
     } catch (err) {
-      return err; // Retorna o erro, caso ocorra
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`); // Retorna o erro, caso ocorra
     }
   }
 
@@ -54,11 +53,11 @@ export class CountryService {
       }
       return result.recordset[0];
     } catch (err) {
-      return err; // Retorna o erro, caso ocorra
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`); // Retorna o erro, caso ocorra
     }
   }
 
-  async update(id: number, updateCountryDto: UpdateCountryDto) {
+  async update(id: number, updateCountryDto: Country) {
     const { pais, ddi, sigla, ativo } = updateCountryDto;
     const now = new Date(); // Data de última alteração
 

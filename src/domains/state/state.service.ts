@@ -1,6 +1,5 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateStateDto } from './dto/create-state.dto';
-import { UpdateStateDto } from './dto/update-state.dto';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { State } from './dto/state.dto';
 import * as sql from 'mssql';
 
 @Injectable()
@@ -10,7 +9,7 @@ export class StateService {
     private readonly sqlConnection: sql.ConnectionPool,
   ) {}
 
-  async create(createStateDto: CreateStateDto) {
+  async create(createStateDto: State) {
     const { idPais, estado, uf, ativo } = createStateDto;
     const date = new Date();
 
@@ -30,7 +29,7 @@ export class StateService {
         message: 'Estado criado com sucesso!',
       };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
@@ -53,7 +52,7 @@ export class StateService {
       }))
       return data;
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
@@ -76,11 +75,11 @@ export class StateService {
         return { error: 'Estado não encontrado' }; // Se o estado não for encontrado
       }
     } catch (err) {
-      return err; // Retorna o erro, caso ocorra
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);; // Retorna o erro, caso ocorra
     }
   }
 
-  async update(id: number, updateStateDto: UpdateStateDto) {
+  async update(id: number, updateStateDto: State) {
     const { idPais, estado, uf, ativo } = updateStateDto;
     const date = new Date();
 
@@ -106,7 +105,7 @@ export class StateService {
         message: 'Estado atualizado com sucesso!',
       };
     } catch (err) {
-      return err;
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
     }
   }
 
