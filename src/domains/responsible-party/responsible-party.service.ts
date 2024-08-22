@@ -34,8 +34,8 @@ export class ResponsiblePartyService {
       .input('complemento', sql.VarChar(100), complemento)
       .input('idCidade', sql.Int, idCidade)
       .input('ativo', sql.Bit, ativo)
-      .input('dtCadastro', sql.Date, date)
-      .input('dtUltAlt', sql.Date, date).query`
+      .input('dtCadastro', sql.DateTime, date)
+      .input('dtUltAlt', sql.DateTime, date).query`
         INSERT INTO responsaveis (nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, profissao, cep, logradouro, bairro, numero, complemento, idCidade, ativo, dtCadastro, dtUltAlt)
         VALUES (@nome, @cpf, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @profissao, @cep, @logradouro, @bairro, @numero, @complemento, @idCidade, @ativo, @dtCadastro, @dtUltAlt)
       `;
@@ -95,8 +95,8 @@ export class ResponsiblePartyService {
       .input('complemento', sql.VarChar(100), complemento)
       .input('idCidade', sql.Int, idCidade)
       .input('ativo', sql.Bit, ativo)
-      .input('dtCadastro', sql.Date, date)
-      .input('dtUltAlt', sql.Date, date).query`
+      .input('dtCadastro', sql.DateTime, date)
+      .input('dtUltAlt', sql.DateTime, date).query`
         UPDATE responsaveis
         SET nome = @nome, cpf = @cpf, rg = @rg, dtNascimento = @dtNascimento, email = @email, celular = @celular, sexo = @sexo, 
         estCivil = @estCivil, profissao = @profissao, cep = @cep, logradouro = @logradouro, bairro = @bairro, numero = @numero, 

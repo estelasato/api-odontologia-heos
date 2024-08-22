@@ -40,8 +40,8 @@ export class ProfessionalService {
         .input('complemento', sql.VarChar(100), complemento)
         .input('idCidade', sql.Int, idCidade)
         .input('ativo', sql.Bit, ativo)
-        .input('dtCadastro', sql.Date, date)
-        .input('dtUltAlt', sql.Date, date).query`
+        .input('dtCadastro', sql.DateTime, date)
+        .input('dtUltAlt', sql.DateTime, date).query`
         INSERT INTO profissionais (nome, cpfCnpj, rg, dtNascimento, email, celular, sexo, estCivil, cro, certificacoes, especialidade, formacoes, cep, logradouro, bairro, numero, complemento, idCidade, ativo, dtCadastro, dtUltAlt)
         VALUES (@nome, @cpfCnpj, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @cro, @certificacoes, @especialidade, @formacoes, @cep, @logradouro, @bairro, @numero, @complemento, @idCidade, @ativo, @dtCadastro, @dtUltAlt)
       `;
@@ -112,8 +112,8 @@ export class ProfessionalService {
         .input('complemento', sql.VarChar(100), complemento)
         .input('idCidade', sql.Int, idCidade)
         .input('ativo', sql.Bit, ativo)
-        .input('dtCadastro', sql.Date, date)
-        .input('dtUltAlt', sql.Date, date).query(`
+        .input('dtCadastro', sql.DateTime, date)
+        .input('dtUltAlt', sql.DateTime, date).query(`
         UPDATE profissionais
         SET nome = @nome, cpfCnpj = @cpfCnpj, rg = @rg, dtNascimento = @dtNascimento, email = @email, celular = @celular, 
         sexo = @sexo, estCivil = @estCivil, cro = @cro, certificacoes = @certificacoes, 

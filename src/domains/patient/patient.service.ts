@@ -62,8 +62,8 @@ export class PatientService {
         .input('complemento', sql.VarChar(100), complemento)
         .input('idCidade', sql.Int, idCidade)
         .input('ativo', sql.Bit, ativo)
-        .input('dtCadastro', sql.Date, date)
-        .input('dtUltAlt', sql.Date, date).query`
+        .input('dtCadastro', sql.DateTime, date)
+        .input('dtUltAlt', sql.DateTime, date).query`
         INSERT INTO pacientes (nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, profissao, indicacao, 
         cep, logradouro, bairro, numero, complemento, ativo, dtCadastro, dtUltAlt)
         OUTPUT INSERTED.*
@@ -79,8 +79,8 @@ export class PatientService {
             .request()
             .input('idPaciente', sql.Int, idPac.id)
             .input('idResponsavel', sql.Int, idResp.id)
-            .input('dtCadastro', sql.Date, date)
-            .input('dtUltAlt', sql.Date, date).query`
+            .input('dtCadastro', sql.DateTime, date)
+            .input('dtUltAlt', sql.DateTime, date).query`
             INSERT INTO pac_resp (idPaciente, idResponsavel, dtCadastro, dtUltAlt)
             VALUES (@idPaciente, @idResponsavel, @dtCadastro, @dtUltAlt)
           `;
@@ -94,8 +94,8 @@ export class PatientService {
             .request()
             .input('idPaciente', sql.Int, idPac.id)
             .input('idHabito', sql.Int, idHab.id)
-            .input('dtCadastro', sql.Date, date)
-            .input('dtUltAlt', sql.Date, date).query`
+            .input('dtCadastro', sql.DateTime, date)
+            .input('dtUltAlt', sql.DateTime, date).query`
             INSERT INTO hab_paciente (idPaciente, idHabito, dtCadastro, dtUltAlt) 
             VALUES (@idPaciente, @idHabito, @dtCadastro, @dtUltAlt)
           `;
@@ -211,7 +211,7 @@ export class PatientService {
         .input('complemento', sql.VarChar(100), complemento)
         .input('idCidade', sql.Int, idCidade)
         .input('ativo', sql.Bit, ativo)
-        .input('dtUltAlt', sql.Date, date).query`
+        .input('dtUltAlt', sql.DateTime, date).query`
         UPDATE pacientes
         SET nome = @nome, cpf = @cpf, rg = @rg, dtNascimento = @dtNascimento, email = @email, celular = @celular, 
         sexo = @sexo, estCivil = @estCivil, profissao = @profissao, indicacao = @indicacao, cep = @cep, 
@@ -252,8 +252,8 @@ export class PatientService {
             .request()
             .input('idPaciente', sql.Int, id)
             .input('idHabito', sql.Int, idHab.id)
-            .input('dtCadastro', sql.Date, date)
-            .input('dtUltAlt', sql.Date, date).query`
+            .input('dtCadastro', sql.DateTime, date)
+            .input('dtUltAlt', sql.DateTime, date).query`
               INSERT INTO hab_paciente (idPaciente, idHabito, dtCadastro, dtUltAlt) 
               VALUES (@idPaciente, @idHabito,@dtCadastro, @dtUltAlt)
             `;
@@ -286,7 +286,7 @@ export class PatientService {
       };
     } catch (error) {
       console.log(error);
-      throw new BadRequestException('Erro ao remover paciente', error);
+      throw new BadRequestException('Erro ao remover paciente', error.message);
     }
   }
 }

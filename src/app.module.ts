@@ -23,6 +23,14 @@ import { ProfessionalController } from './domains/professional/professional.cont
 import { ProfessionalService } from './domains/professional/professional.service';
 import { ResponsiblePartyController } from './domains/responsible-party/responsible-party.controller';
 import { ResponsiblePartyService } from './domains/responsible-party/responsible-party.service';
+import { ScheduleController } from './domains/schedule/schedule.controller';
+import { ScheduleService } from './domains/schedule/schedule.service';
+import { TreatmentsController } from './domains/treatments/treatments.controller';
+import { TreatmentsService } from './domains/treatments/treatments.service';
+import { AnamnesisController } from './domains/anamnesis/anamnesis.controller';
+import { AnamnesisService } from './domains/anamnesis/anamnesis.service';
+import { ExamsController } from './domains/exams/exams.controller';
+import { ExamsService } from './domains/exams/exams.service';
 
 @Module({
   imports: [DatabaseModule],
@@ -38,6 +46,10 @@ import { ResponsiblePartyService } from './domains/responsible-party/responsible
     PatientController,
     ProfessionalController,
     ResponsiblePartyController,
+    ScheduleController,
+    TreatmentsController,
+    AnamnesisController,
+    ExamsController,
   ],
   providers: [
     CountryService,
@@ -51,6 +63,10 @@ import { ResponsiblePartyService } from './domains/responsible-party/responsible
     PatientService,
     ProfessionalService,
     ResponsiblePartyService,
+    ScheduleService,
+    TreatmentsService,
+    AnamnesisService,
+    ExamsService,
   ],
 })
 export class AppModule {}

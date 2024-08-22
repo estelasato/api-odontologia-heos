@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEmployee } from './dto/create-employee.dto';
 import { UpdateEmployee } from './dto/update-employee.dto';
 import * as sql from 'mssql';
@@ -9,34 +14,56 @@ export class EmployeeService {
   constructor(
     @Inject('SQL_CONNECTION')
     private readonly sqlConnection: sql.ConnectionPool,
-    private readonly cityService: CityService
+    private readonly cityService: CityService,
   ) {}
 
   async create(data: CreateEmployee) {
-    const { nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, ativo, cargo, salario, pis, dtAdmissao, dtDemissao,
-       cep, bairro, complemento, idCidade, logradouro, numero} = data;
+    const {
+      nome,
+      cpf,
+      rg,
+      dtNascimento,
+      email,
+      celular,
+      sexo,
+      estCivil,
+      ativo,
+      cargo,
+      salario,
+      pis,
+      dtAdmissao,
+      dtDemissao,
+      cep,
+      bairro,
+      complemento,
+      idCidade,
+      logradouro,
+      numero,
+    } = data;
     const date = new Date();
 
     try {
-        // // Verifica duplicidade de CPF, Email e PIS
-        // const existingEmployee = await this.sqlConnection
-        //     .request()
-        //     .input('cpf', sql.VarChar(11), cpf)
-        //     .input('email', sql.VarChar(100), email)
-        //     .input('pis', sql.VarChar(11), pis)
-        //     .query(`
-        //         SELECT 1 FROM funcionarios 
-        //         WHERE cpf = @cpf OR email = @email OR pis = @pis
-        //     `);
-        
-        // if (existingEmployee.recordset.length > 0) {
-        //     throw new BadRequestException(`Funcionário com CPF, Email ou PIS já existe.`);
-        // }
+      // // Verifica duplicidade de CPF, Email e PIS
+      // const existingEmployee = await this.sqlConnection
+      //     .request()
+      //     .input('cpf', sql.VarChar(11), cpf)
+      //     .input('email', sql.VarChar(100), email)
+      //     .input('pis', sql.VarChar(11), pis)
+      //     .query(`
+      //         SELECT 1 FROM funcionarios
+      //         WHERE cpf = @cpf OR email = @email OR pis = @pis
+      //     `);
+
+      // if (existingEmployee.recordset.length > 0) {
+      //     throw new BadRequestException(`Funcionário com CPF, Email ou PIS já existe.`);
+      // }
+      const cpfValue = cpf.trim() === '' ? null : cpf;
+      const rgValue = rg.trim() === '' ? null : rg;
       const result = await this.sqlConnection
         .request()
         .input('nome', sql.VarChar(50), nome)
-        .input('cpf', sql.VarChar(11), cpf)
-        .input('rg', sql.VarChar(9), rg)
+        .input('cpf', sql.VarChar(11), cpfValue)
+        .input('rg', sql.VarChar(9), rgValue)
         .input('dtNascimento', sql.Date, dtNascimento)
         .input('email', sql.VarChar(50), email)
         .input('celular', sql.VarChar(11), celular)
@@ -57,12 +84,12 @@ export class EmployeeService {
         .input('dtCadastro', date)
         .input('dtUltAlt', date).query`
           INSERT INTO funcionarios (nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, ativo, cargo, salario, pis, dtAdmissao, dtDemissao, idCidade, dtCadastro, dtUltAlt)
-
           values (@nome, @cpf, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @ativo, @cargo, @salario, @pis, @dtAdmissao, @dtDemissao, @idCidade, @dtCadastro, @dtUltAlt)
-        `;
-        console.log(result)
+          SELECT * FROM funcionarios WHERE id = SCOPE_IDENTITY()
+          `;
+      const insertedRecord = result.recordset[0];
 
-        return {message: 'Funcionário criado com sucesso!'}
+      return { message: 'Funcionário criado com sucesso!', insertedRecord };
     } catch (err) {
       throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
@@ -73,17 +100,19 @@ export class EmployeeService {
       const result = await this.sqlConnection.query(
         'SELECT * FROM funcionarios',
       );
-      const data = await Promise.all(result.recordset?.map(async (e) => {
-        const city = await this.sqlConnection.query(
-          `select * from cidades where id = ${e.idCidade}`
-        );
-        if (city.rowsAffected > 0) {
-          const c = city.recordset[0];
-          return {...e, cidade: {id: c.idCidade, cidade: c.cidade}};
-        } else return e
-      }))
-      return data
-    } catch(err) {
+      const data = await Promise.all(
+        result.recordset?.map(async (e) => {
+          const city = await this.sqlConnection.query(
+            `select * from cidades where id = ${e.idCidade}`,
+          );
+          if (city.rowsAffected > 0) {
+            const c = city.recordset[0];
+            return { ...e, cidade: { id: c.idCidade, cidade: c.cidade } };
+          } else return e;
+        }),
+      );
+      return data;
+    } catch (err) {
       throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
@@ -97,17 +126,38 @@ export class EmployeeService {
       const cep = await this.cityService.findCEP(r.recordset[0].idCidade);
 
       if (r.recordset.length > 0) {
-        return {...r.recordset[0], ...cep};
+        return { ...r.recordset[0], ...cep };
       } else {
-        return { error: 'Funcionário não encontrado!'}
+        return { error: 'Funcionário não encontrado!' };
       }
-    } catch(e) {
+    } catch (e) {
       return e;
     }
   }
 
   async update(id: number, data: UpdateEmployee) {
-    const { nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, ativo, cargo, salario, pis, dtAdmissao, dtDemissao, idCidade, cep, complemento, numero, bairro,  logradouro} = data;
+    const {
+      nome,
+      cpf,
+      rg,
+      dtNascimento,
+      email,
+      celular,
+      sexo,
+      estCivil,
+      ativo,
+      cargo,
+      salario,
+      pis,
+      dtAdmissao,
+      dtDemissao,
+      idCidade,
+      cep,
+      complemento,
+      numero,
+      bairro,
+      logradouro,
+    } = data;
     const date = new Date();
 
     try {
@@ -139,13 +189,15 @@ export class EmployeeService {
           where id = ${id}; select @@ROWCOUNT AS rowsAffected;
           `);
 
-          if (updateResult.recordset[0].rowsAffected === 0) {
-            throw new NotFoundException('Funcionário não encontrado para atualização'); 
-          }
+      if (updateResult.recordset[0].rowsAffected === 0) {
+        throw new NotFoundException(
+          'Funcionário não encontrado para atualização',
+        );
+      }
 
-          return {
-            message: 'Funcionário atualizado com sucesso!',
-          };
+      return {
+        message: 'Funcionário atualizado com sucesso!',
+      };
     } catch (error) {
       throw new BadRequestException(`Ocorreu um errro: ${error.message}`);
     }
@@ -156,7 +208,7 @@ export class EmployeeService {
       const deleteResult = await this.sqlConnection
         .request()
         .query(
-          `delete from funcionarios where id = ${id}; select @@ROWCOUNT AS rowsAffected;`
+          `delete from funcionarios where id = ${id}; select @@ROWCOUNT AS rowsAffected;`,
         );
       if (deleteResult.recordset[0].rowsAffected === 0) {
         throw new NotFoundException('Funcionário não encontrado para exclusão');
@@ -164,8 +216,8 @@ export class EmployeeService {
 
       return {
         message: 'Funcionário excluído com sucesso!',
-      }
-    } catch(err) {
+      };
+    } catch (err) {
       throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
