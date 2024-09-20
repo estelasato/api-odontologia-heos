@@ -102,8 +102,10 @@ export class PatientService {
         }
       }
       await transaction.commit();
-
-      return { message: 'Paciente criado com sucesso!' };
+      
+      const insertedRecord = result.recordset[0];
+      
+      return insertedRecord;
     } catch (error) {
       await transaction.rollback();
       throw new BadRequestException(`Erro ao criar paciente: ${error.message}`);

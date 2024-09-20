@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common'
 import { MedicationService } from './medication.service';
 import { BasicFormDto } from 'src/shared/dto/basicForm.dto';
 
-@Controller('medication')
+@Controller('medications')
 export class MedicationController {
   constructor(private readonly medicationService: MedicationService) {}
 

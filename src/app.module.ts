@@ -11,7 +11,7 @@ import { EmployeeController } from './domains/employee/employee.controller';
 import { EmployeeService } from './domains/employee/employee.service';
 import { IllnessController } from './domains/illness/illness.controller';
 import { IllnessService } from './domains/illness/illness.service';
-import { MedicationController } from './domains/medication/medication.controller';
+import { MedicationsController } from './domains/medications/medications.controller';
 import { HabitController } from './domains/habit/habit.controller';
 import { AllergyController } from './domains/allergy/allergy.controller';
 import { MedicationService } from './domains/medication/medication.service';
@@ -31,6 +31,10 @@ import { AnamnesisController } from './domains/anamnesis/anamnesis.controller';
 import { AnamnesisService } from './domains/anamnesis/anamnesis.service';
 import { ExamsController } from './domains/exams/exams.controller';
 import { ExamsService } from './domains/exams/exams.service';
+import { IllnessAnamnesisService } from './domains/anamnesis/entities/illness_anamnesis/illness_anamnesis.service';
+import { MedicationsService } from './domains/medications/medications.service';
+import { MedAnamnesisService } from './domains/anamnesis/entities/med_anamnesis/med_anamnesis.service';
+import { AllergiesAnamnesisService } from './domains/anamnesis/entities/allergies_anamnesis/allergies_anamnesis.service';
 
 @Module({
   imports: [DatabaseModule],
@@ -40,7 +44,7 @@ import { ExamsService } from './domains/exams/exams.service';
     CityController,
     EmployeeController,
     IllnessController,
-    MedicationController,
+    MedicationsController,
     HabitController,
     AllergyController,
     PatientController,
@@ -57,7 +61,7 @@ import { ExamsService } from './domains/exams/exams.service';
     CityService,
     EmployeeService,
     IllnessService,
-    MedicationService,
+    MedicationsService,
     HabitService,
     AllergyService,
     PatientService,
@@ -67,6 +71,9 @@ import { ExamsService } from './domains/exams/exams.service';
     TreatmentsService,
     AnamnesisService,
     ExamsService,
+    IllnessAnamnesisService,
+    MedAnamnesisService,
+    AllergiesAnamnesisService,
   ],
 })
 export class AppModule {}

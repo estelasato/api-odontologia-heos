@@ -28,10 +28,8 @@ export class TreatmentDto {
 
 export class filterTreatmentDto {
   @IsOptional()
-  @IsArray()
-  @Type(() => String)
-  @Transform(({value}) => value.split(','))
-  idPacientes?: string[];
+  @IsNumber()
+  idPaciente?: number;
 
   @IsOptional()
   @IsArray()
@@ -65,7 +63,7 @@ export class TreatmentTypes {
 }
 
 export class TreatmentFilter {
-  idPacientes?: string[];
+  idPaciente?: number;
   idProfissionais?: string[];
   dataInicial?: Date;
   dataFinal?: Date;

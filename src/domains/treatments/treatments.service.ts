@@ -50,11 +50,11 @@ export class TreatmentsService {
   }
 
   async findAll(filter?: TreatmentFilter) {
-    const { dataFinal, dataInicial, idPacientes, idProfissionais, idAnamnese } = filter;
+    const { dataFinal, dataInicial, idPaciente, idProfissionais, idAnamnese } = filter;
     let whereClauses = [];
-    if (idPacientes && idPacientes.length > 0) {
+    if (idPaciente) {
       whereClauses.push(
-        `idPaciente IN (${idPacientes?.map((p) => `'${p}'`).join(',')})`,
+        `idPaciente = ${idPaciente}`,
       );
     }
 
@@ -73,7 +73,7 @@ export class TreatmentsService {
     if (dataFinal) whereClauses.push(`dataFim <= '${dataFinal}'`);
 
     const whereClause =
-      whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+      whereClauses?.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
     try {
       const r = await this.sqlCon.query(

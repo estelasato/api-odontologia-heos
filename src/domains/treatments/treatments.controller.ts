@@ -12,7 +12,7 @@ export class TreatmentsController {
   }
 
   @Get()
-  findAll(@Query() filter: filterTreatmentDto) {
+  findAll(@Query() filter: any) {
     return this.treatmentsService.findAll(filter);
   }
 
