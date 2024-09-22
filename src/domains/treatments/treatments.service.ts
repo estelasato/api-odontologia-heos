@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   TreatmentDto,
   TreatmentFilter,
@@ -44,18 +49,17 @@ export class TreatmentsService {
 
       return { message: 'Tratamento criado com sucesso!', inserted };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       throw new BadRequestException(`Ocorreu um erro: ${e.message}`);
     }
   }
 
   async findAll(filter?: TreatmentFilter) {
-    const { dataFinal, dataInicial, idPaciente, idProfissionais, idAnamnese } = filter;
+    const { dataFinal, dataInicial, idPaciente, idProfissionais, idAnamnese } =
+      filter;
     let whereClauses = [];
     if (idPaciente) {
-      whereClauses.push(
-        `idPaciente = ${idPaciente}`,
-      );
+      whereClauses.push(`idPaciente = ${idPaciente}`);
     }
 
     if (idAnamnese) {
@@ -98,37 +102,48 @@ export class TreatmentsService {
         `,
       );
 
-      if (r.recordset.length > 0) { 
+      if (r.recordset.length > 0) {
         return r.recordset[0];
       } else {
         return { error: 'Tratamento não encontrado' };
       }
-
     } catch (err) {
-      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);; 
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 
   async update(id: number, data: TreatmentDto) {
-    const { idPaciente, idProfissional, dataFim, dataInicio, dente, descricao } = data;
+    const {
+      idPaciente,
+      idProfissional,
+      dataFim,
+      dataInicio,
+      dente,
+      descricao,
+      idAnamnese,
+    } = data;
     const date = new Date();
 
     try {
-      const r = await this.sqlCon.request()
-      .input('idPaciente', sql.Int, idPaciente)
-      .input('idProfissional', sql.Int, idProfissional)
-      .input('dataFim', sql.DateTime, dataFim)
-      .input('dataInicio', sql.DateTime, dataInicio)
-      .input('dente', sql.Varchar, dente)
-      .input('descricao', sql.VarChar, descricao)
-      .input('dtUltALt', sql.DateTime, date)
-      .query(
-        `UPDATE tratamentos
-        SET idPaciente = @idPaciente, idProfissional = @idProfissional, dataFim = @dataFim, dataInicio = @dataInicio, dente = @dente, descricao = @descricao, dtUltAlt = @dtUltAlt
-        WHERE id = ${id};
+      const r = await this.sqlCon
+        .request()
+        .input('idAnamnese', sql.Int, idAnamnese)
+        .input('idPaciente', sql.Int, idPaciente)
+        .input('idProfissional', sql.Int, idProfissional)
+        .input('dataFim', sql.DateTime, dataFim)
+        .input('dataInicio', sql.DateTime, dataInicio)
+        .input('dente', sql.VarChar, dente)
+        .input('descricao', sql.VarChar, descricao)
+        .input('dtUltALt', sql.DateTime, date)
+        .input('id', sql.Int, id)
+        .query(
+          `UPDATE tratamentos
+        SET idAnamnese = @idAnamnese, idPaciente = @idPaciente, idProfissional = @idProfissional, dataFim = @dataFim, dataInicio = @dataInicio, dente = @dente, descricao = @descricao, dtUltAlt = @dtUltAlt
+        WHERE id = @id;
         SELECT @@ROWCOUNT AS rowsAffected;
-        `
-      )
+        `,
+        );
+
       if (r.rowsAffected[0] === 0) {
         throw new NotFoundException('Tratamento não encontrado');
       }
@@ -136,8 +151,8 @@ export class TreatmentsService {
       return {
         message: 'Tratamento atualizado com sucesso!',
       };
-    } catch(e) {
-      throw new BadRequestException('Erro', e)
+    } catch (e) {
+      throw new BadRequestException('Erro', e);
     }
   }
 
@@ -151,8 +166,8 @@ export class TreatmentsService {
       }
 
       return {
-        message: 'tratamento removido com sucesso!'
-      }
+        message: 'tratamento removido com sucesso!',
+      };
     } catch (e) {
       throw new BadRequestException('Erro ao remover tratamento', e);
     }

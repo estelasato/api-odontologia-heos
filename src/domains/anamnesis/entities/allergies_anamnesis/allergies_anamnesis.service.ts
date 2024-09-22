@@ -21,17 +21,16 @@ export class AllergiesAnamnesisService {
   async createOrUpdate (data: AllergiesAnamnesisType) {
     const { idAlergia,idAnamnese,complicacoes,gravidade,id,obs,tratamento} = data
     const date = new Date()
-
     try {
       await this.sqlCon
         .request()
         .input('id', sql.Int, id)
-        .input(idAlergia, sql.Int, idAlergia)
-        .input(idAnamnese, sql.Int, idAnamnese)
-        .input(obs, sql.VarChar, obs)
-        .input(gravidade, sql.VarChar, gravidade)
-        .input(complicacoes, sql.VarChar, complicacoes)
-        .input(tratamento, sql.VarChar, tratamento)
+        .input('idAlergia', sql.Int, idAlergia)
+        .input('idAnamnese', sql.Int, idAnamnese)
+        .input('obs', sql.VarChar, obs)
+        .input('gravidade', sql.VarChar, gravidade)
+        .input('complicacoes', sql.VarChar, complicacoes)
+        .input('tratamento', sql.VarChar, tratamento)
         .input('dtCadastro', date)
         .input('dtUltAlt', date)
         .query(

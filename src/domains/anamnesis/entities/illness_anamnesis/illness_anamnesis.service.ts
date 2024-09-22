@@ -1,6 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import * as sql from 'mssql';
-import { IllnessAnamnesisDto } from './dto/illness_anamnesis.dto';
+
+export class IllnessAnamnesisTypes {
+  id?: number;
+  idDoenca: number;
+  idAnamnese: number;
+  obs?: string;
+  gravidade?: string;
+  cronica?: boolean;
+  complicacoes?: string;
+  tratamento?: string;
+}
 
 @Injectable()
 export class IllnessAnamnesisService {
@@ -9,13 +19,14 @@ export class IllnessAnamnesisService {
     private readonly sqlCon: sql.ConnectionPool,
   ) {}
 
-  async create (data: IllnessAnamnesisDto) {
-    const { idAnamnese, idDoenca, obs, gravidade, cronica, complicacoes, tratamento } = data;
+  async createOrUpdate (data: IllnessAnamnesisTypes) {
+    const { id, idAnamnese, idDoenca, obs, gravidade, cronica, complicacoes, tratamento } = data;
     const date = new Date()
 
     try {
       const result = await this.sqlCon
         .request()
+        .input('id', sql.Int, id)
         .input('idAnamnese', sql.Int, idAnamnese)
         .input('idDoenca', sql.Int, idDoenca)
         .input('obs', sql.VarChar, obs)
@@ -25,16 +36,37 @@ export class IllnessAnamnesisService {
         .input('tratamento', sql.VarChar, tratamento)
         .input('dtCadastro', date)
         .input('dtUltAlt', date)
-        .query(`
+        .query( id ? 
+          `
+            UPDATE doencas_anamnese (idAnamnese, idDoenca, obs, gravidade, cronica, complicacoes, tratamento, dtUltAlt)
+            SET idAnamnese = @idAnamnese, idDoenca = @idDoenca, obs = @obs, gravidade = @gravidade, cronica = @cronica, complicacoes = @complicacoes, tratamento = @tratamento, dtUltAlt = @dtUltAlt
+            WHERE id = ${id};
+          ` :
+          `
           INSERT INTO doencas_anamnese (idAnamnese, idDoenca, obs, gravidade, cronica, complicacoes, tratamento)
           VALUES (@idAnamnese, @idDoenca, @obs, @gravidade, @cronica, @complicacoes, @tratamento);
           SELECT * FROM doencas_anamnese WHERE id = SCOPE_IDENTITY()
         `);
-      const inserted = result.recordset[0];
+      // const inserted = result.recordset[0];
 
-      return inserted;
+      // return inserted;
     } catch (e) {
       throw new Error(`Ocorreu um erro: ${e.message}`);
+    }
+  }
+
+  async delete (id: number, idAnamnese: number, idDoenca: number) {
+    try {
+      await this.sqlCon
+        .request()
+        .input('id', sql.Int, id)
+        .input('idAnamnese', sql.Int, idAnamnese)
+        .input('idDoenca', sql.Int, idDoenca)
+        .query(
+          `DELETE FROM doencas_anamnese WHERE id = @id AND idAnamnese = @idAnamnese AND idDoenca = @idDoenca`
+        )
+    } catch (e) {
+      throw new BadRequestException(`erro illness anamnese: ${e.message}`);
     }
   }
 

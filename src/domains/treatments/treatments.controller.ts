@@ -22,12 +22,12 @@ export class TreatmentsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateTreatmentDto: TreatmentDto) {
-    return this.treatmentsService.update(+id, updateTreatmentDto);
+  update(@Param('id') id: number, @Body() updateTreatmentDto: TreatmentDto) {
+    return this.treatmentsService.update(id, updateTreatmentDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.treatmentsService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.treatmentsService.remove(id);
   }
 }

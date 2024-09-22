@@ -40,70 +40,61 @@ export class AnamnesisService {
       if (doencas) {
         await Promise.all(
           doencas.map(async (d) => {
-            await this.sqlCon
-              .request()
-              .input('idAnamnese', sql.Int, inserted.id)
-              .input('idDoenca', sql.Int, d.idDoenca)
-              .input('obs', sql.VarChar, d.obs)
-              .input('gravidade', sql.VarChar, d.gravidade)
-              .input('cronica', sql.Bit, d.cronica)
-              .input('complicacoes', sql.VarChar, d.complicacoes)
-              .input('tratamento', sql.VarChar, d.tratamento)
-              .input('dtCadastro', date)
-              .input('dtUltAlt', date).query(`
-              INSERT INTO doencas_anamnese (idAnamnese, idDoenca, obs, gravidade, cronica, complicacoes, tratamento, dtCadastro, dtUltAlt)
-              VALUES (@idAnamnese, @idDoenca, @obs, @gravidade, @cronica, @complicacoes, @tratamento, @dtCadastro, @dtUltAlt)
-            `);
+            if (d.idDoenca) {
+              await this.sqlCon
+                .request()
+                .input('idAnamnese', sql.Int, inserted.id)
+                .input('idDoenca', sql.Int, d.idDoenca)
+                .input('obs', sql.VarChar, d.obs)
+                .input('gravidade', sql.VarChar, d.gravidade)
+                .input('cronica', sql.Bit, d.cronica)
+                .input('complicacoes', sql.VarChar, d.complicacoes)
+                .input('tratamento', sql.VarChar, d.tratamento)
+                .input('dtCadastro', date)
+                .input('dtUltAlt', date).query(`
+                INSERT INTO doencas_anamnese (idAnamnese, idDoenca, obs, gravidade, cronica, complicacoes, tratamento, dtCadastro, dtUltAlt)
+                VALUES (@idAnamnese, @idDoenca, @obs, @gravidade, @cronica, @complicacoes, @tratamento, @dtCadastro, @dtUltAlt)
+              `);
+            }
           }),
         );
       }
 
       if (medicamentos) {
         await Promise.all(
-          medicamentos?.map(async(m) => {
-            await this.medAnamnese.createOrUpdate({
-              idAnamnese: inserted.id,
-              idMedicamento: m.idMedicamento,
-              dosagem: m.dosagem,
-              frequencia: m.frequencia,
-              motivo: m.motivo,
-              obs: m.obs
-            });
-          })
-          // medicamentos.map(async (m) => {
-          //   await this.sqlCon
-          //     .request()
-          //     .input('idAnamnese', sql.Int, inserted.id)
-          //     .input('idMedicamento', sql.Int, m.idMedicamento)
-          //     .input('dosagem', m.dosagem)
-          //     .input('frequencia', m.frequencia)
-          //     .input('motivo', sql.VarChar, m.motivo)
-          //     .input('obs', sql.VarChar, m.obs)
-          //     .input('dtCadastro', date)
-          //     .input('dtUltAlt', date).query(`
-          //     INSERT INTO med_anamnese (idAnamnese, idMedicamento, obs, dtCadastro, dtUltAlt, dosagem, frequencia, motivo)
-          //     VALUES (@idAnamnese, @idMedicamento, @obs, @dtCadastro, @dtUltAlt, @dosagem, @frequencia, @motivo)
-          //   `);
-          // }),
+          medicamentos?.map(async (m) => {
+            if (m.idMedicamento) {
+              await this.medAnamnese.createOrUpdate({
+                idAnamnese: inserted.id,
+                idMedicamento: m.idMedicamento,
+                dosagem: m.dosagem,
+                frequencia: m.frequencia,
+                motivo: m.motivo,
+                obs: m.obs,
+              });
+            }
+          }),
         );
       }
 
       if (alergias) {
         await Promise.all(
           alergias.map(async (a) => {
-            await this.sqlCon
-              .request()
-              .input('idAnamnese', sql.Int, inserted.id)
-              .input('idAlergia', sql.Int, a.idAlergia)
-              .input('gravidade', sql.VarChar, a.gravidade)
-              .input('complicacoes', sql.VarChar, a.complicacoes)
-              .input('tratamento', sql.VarChar, a.tratamento)
-              .input('obs', sql.VarChar, a.obs)
-              .input('dtCadastro', date)
-              .input('dtUltAlt', date).query(`
-              INSERT INTO alergia_anamnese (idAnamnese, idAlergia, obs, dtCadastro, dtUltAlt, gravidade, complicacoes, tratamento)
-              VALUES (@idAnamnese, @idAlergia, @obs, @dtCadastro, @dtUltAlt, @gravidade, @complicacoes, @tratamento)
-            `);
+            if (a.idAlergia) {
+              await this.sqlCon
+                .request()
+                .input('idAnamnese', sql.Int, inserted.id)
+                .input('idAlergia', sql.Int, a.idAlergia)
+                .input('gravidade', sql.VarChar, a.gravidade)
+                .input('complicacoes', sql.VarChar, a.complicacoes)
+                .input('tratamento', sql.VarChar, a.tratamento)
+                .input('obs', sql.VarChar, a.obs)
+                .input('dtCadastro', date)
+                .input('dtUltAlt', date).query(`
+                INSERT INTO alergia_anamnese (idAnamnese, idAlergia, obs, dtCadastro, dtUltAlt, gravidade, complicacoes, tratamento)
+                VALUES (@idAnamnese, @idAlergia, @obs, @dtCadastro, @dtUltAlt, @gravidade, @complicacoes, @tratamento)
+              `);
+            }
           }),
         );
       }
@@ -185,7 +176,7 @@ export class AnamnesisService {
   async update(id: number, data: AnamnesisTypes) {
     const { idPaciente, obs, queixas, alergias, doencas, medicamentos } = data;
     const date = new Date();
- 
+
     try {
       const r = await this.sqlCon
         .request()
@@ -198,8 +189,8 @@ export class AnamnesisService {
           WHERE id = ${id};
           SELECT * FROM anamneses WHERE id = ${id};
           `);
-
       const allergiesList = await this.allergiesAnamnese.findByAnamnesisId(id);
+
       if (alergias?.length > 0 || allergiesList?.length > 0) {
         if (
           allergiesList?.length > 0 &&
@@ -231,30 +222,30 @@ export class AnamnesisService {
               });
             }
           }),
-        )
+        );
       }
 
       const medList = await this.medAnamnese.findByAnamnesisId(id);
       if (medicamentos?.length > 0 || medList?.length > 0) {
-
-        if (medList?.length > 0 
-          && ((medList?.length === medicamentos?.length && medicamentos?.some((m) => !m.id)
-          || medList?.length !== medicamentos?.length
-          )) 
+        if (
+          medList?.length > 0 &&
+          ((medList?.length === medicamentos?.length &&
+            medicamentos?.some((m) => !m.id)) ||
+            medList?.length !== medicamentos?.length)
         ) {
-          	const ids = medicamentos?.map((m) => m.id);
-            await Promise.all(
-              medList.map(async (m) => {
-                if (m.id && !ids?.includes(m.id)) {
-                  await this.medAnamnese.delete(m.id, id, m.idMedicamento);
-                }
-              }),
-            )
+          const ids = medicamentos?.map((m) => m.id);
+          await Promise.all(
+            medList.map(async (m) => {
+              if (m.id && !ids?.includes(m.id)) {
+                await this.medAnamnese.delete(m.id, id, m.idMedicamento);
+              }
+            }),
+          );
         }
 
         await Promise.all(
-          medicamentos?.map(async(m) => {
-            if (m.idMedicamento) {
+          medicamentos?.map(async (m) => {
+            if (!!m.idMedicamento) {
               await this.medAnamnese.createOrUpdate({
                 id: m.id,
                 idAnamnese: id,
@@ -262,17 +253,16 @@ export class AnamnesisService {
                 dosagem: m.dosagem,
                 frequencia: m.frequencia,
                 motivo: m.motivo,
-                obs: m.obs
+                obs: m.obs,
               });
             }
-          })
-        )
+          }),
+        );
       }
 
       const doencasList = await this.illnessAnamnese.findByAnamnesisId(id);
       // pega lista de doencas dessa anamnese
       if (doencas?.length > 0 || doencasList?.length > 0) {
-
         // casos de exclusão: doencasList != tamanho de doencas ou msm tamanho e algum sem id
         // remove doencas que não estão na lista de doencas
         if (
@@ -341,7 +331,20 @@ export class AnamnesisService {
 
   async remove(id: number) {
     try {
-      const r = await this.sqlCon.request().query(`
+      const illness = await this.illnessAnamnese.findByAnamnesisId(id);
+      const med = await this.medAnamnese.findByAnamnesisId(id);
+      const allergies = await this.allergiesAnamnese.findByAnamnesisId(id);
+
+      if (illness && illness.length > 0) {
+        illness?.map(async(i) => await this.illnessAnamnese.delete(i.id, id, i.idDoenca));
+      }
+      if (med && med.length > 0) {
+        med?.map(async(m) => await this.medAnamnese.delete(m.id, id, m.idMedicamento));
+      }
+      if (allergies && allergies.length > 0) {
+        allergies?.map(async(a) => await this.allergiesAnamnese.delete(a.id, id, a.idAlergia));
+      } 
+      await this.sqlCon.request().query(`
           DELETE FROM anamneses WHERE ID = ${id}
         `);
       return {

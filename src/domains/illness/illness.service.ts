@@ -91,7 +91,6 @@ export class IllnessService {
       .query(
         `delete from doencas where id = ${id}; SELECT @@ROWCOUNT AS rowsAffected`,
       );
-      console.log(result)
 
       if (result.recordset[0].rowsAffected === 0) {
         throw new NotFoundException('Item não encontrado para exclusão');

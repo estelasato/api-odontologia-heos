@@ -13,8 +13,9 @@ export class TreatmentDto {
   @IsOptional()
   dataFim: Date;
 
+  @IsOptional()
   @IsString()
-  dente: string;
+  dente?: string;
 
   @IsNumber()
   idPaciente: number;
@@ -56,7 +57,7 @@ export class TreatmentTypes {
   descricao?: string;
   dataInicio: Date;
   dataFim?: Date;
-  dente:string;
+  dente?:string;
   idPaciente: number;
   idProfissional: number;
   idAnamnese: number;
