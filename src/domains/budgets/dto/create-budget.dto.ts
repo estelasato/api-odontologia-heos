@@ -1,4 +1,40 @@
-import { IsDateString, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsDateString, IsNumber, IsOptional, IsString } from "class-validator";
+
+export class BudgetTreatmentDto{
+  @IsOptional()
+  @IsNumber()
+  id?: number;
+
+  // @IsNumber()
+  // idOrcamento: number;
+
+  @IsNumber()
+  idTratamento: number;
+
+  @IsOptional()
+  @IsString()
+  obs?: string;
+
+  @IsNumber()
+  qtd: number;
+
+  @IsOptional()
+  @IsNumber()
+  total?: number;
+
+  @IsOptional()
+  @IsNumber()
+  valor?: number;
+}
+
+export class budgetTreatmentDto{
+  id?: number;
+  idTratamento: number;
+  obs?: string;
+  qtd: number;
+  total?: number;
+  valor?: number;
+}
 
 export class CreateBudgetDto {
   @IsNumber()
@@ -19,8 +55,10 @@ export class CreateBudgetDto {
   idProfissional: number;
 
   @IsNumber()
-  @IsOptional()
-  idCondPagamento?: number;
+  idCondPagamento: number;
+
+  @IsArray()
+  tratamentos: BudgetTreatmentDto[];
 }
 
 export class createBudgetDto {
@@ -29,7 +67,9 @@ export class createBudgetDto {
   idAnamnese: number;
   idPaciente: number;
   idProfissional: number;
-  idCondPagamento?: number;
+  idCondPagamento: number;
+
+  tratamentos: budgetTreatmentDto[];
 }
 
 export class BudgetFilterDto {

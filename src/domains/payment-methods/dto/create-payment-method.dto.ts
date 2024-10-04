@@ -1,9 +1,9 @@
 import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreatePaymentMethodDto {
-  @IsNumber()
-  @IsOptional()
-  id?: number;
+  // @IsNumber()
+  // @IsOptional()
+  // id?: number;
 
   @IsNumber()
   status: number;

@@ -10,9 +10,6 @@ export class CreateInstallmentDto {
   @IsNumber()
   perc: number;
 
-  @IsNumber()
-  percTotatl: number;
-
   // @IsNumber()
   // status?: number
   @IsNumber()

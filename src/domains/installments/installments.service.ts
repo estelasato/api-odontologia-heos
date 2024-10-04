@@ -11,7 +11,7 @@ export class InstallmentsService {
   ) {}
 
   async create(data: CreateInstallmentDto) {
-    const { dias, idCondPag, idFormaPag, numParcela, perc, percTotatl } = data;
+    const { dias, idCondPag, idFormaPag, numParcela, perc } = data;
     const date = new Date();
 
     try {
@@ -20,14 +20,13 @@ export class InstallmentsService {
         .input('numParcela', sql.Int, numParcela)
         .input('dias', sql.Int, dias)
         .input('perc', sql.Decimal, perc)
-        .input('percTotal', sql.Decimal, percTotatl)
         .input('status', sql.Int, 1)
         .input('idFormaPag', sql.Int, idFormaPag)
         .input('idCondPag', sql.Int, idCondPag)
         .input('dtCadastro', sql.DateTime, date)
         .input('dtUltAlt', sql.DateTime, date).query`
-        INSERT INTO parcelas (numParcela, dias, perc, percTotal, status, idFormaPag, idCondPag, dtCadastro, dtUltAlt)
-        VALUES (@numParcela, @dias, @perc, @percTotal, @status, @idFormaPag, @idCondPag, @dtCadastro, @dtUltAlt)  
+        INSERT INTO parcelas (numParcela, dias, perc status, idFormaPag, idCondPag, dtCadastro, dtUltAlt)
+        VALUES (@numParcela, @dias, @perc, @status, @idFormaPag, @idCondPag, @dtCadastro, @dtUltAlt)  
       `;
 
       return { message: 'Parcela criada com sucesso!' };
@@ -63,7 +62,7 @@ export class InstallmentsService {
   }
 
   async update(id: number, data: UpdateInstallmentDto) {
-    const { dias, idCondPag, idFormaPag, numParcela, perc, percTotatl } = data;
+    const { dias, idCondPag, idFormaPag, numParcela, perc } = data;
 
     try {
       const date = new Date();
@@ -72,14 +71,13 @@ export class InstallmentsService {
         .input('numParcela', sql.Int, numParcela)
         .input('dias', sql.Int, dias)
         .input('perc', sql.Decimal, perc)
-        .input('percTotal', sql.Decimal, percTotatl)
         .input('status', sql.Int, 1)
         .input('idFormaPag', sql.Int, idFormaPag)
         .input('idCondPag', sql.Int, idCondPag)
         .input('dtCadastro', sql.DateTime, date)
         .input('dtUltAlt', sql.DateTime, date).query`
       UPDATE parcelas 
-      SET numParcela = @numParcela, dias = @dias, perc = @perc, percTotal = @percTotal, status = @status, idFormaPag = @idFormaPag, idCondPag = @idCondPag, dtCadastro = @dtCadastro, dtUltAlt = @dtUltAlt
+      SET numParcela = @numParcela, dias = @dias, perc = @perc, status = @status, idFormaPag = @idFormaPag, idCondPag = @idCondPag, dtCadastro = @dtCadastro, dtUltAlt = @dtUltAlt
       WHERE id = @id;
     `;
 

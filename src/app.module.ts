@@ -41,6 +41,8 @@ import { PaymentTermsController } from './domains/payment-terms/payment-terms.co
 import { BudgetsController } from './domains/budgets/budgets.controller';
 import { BudgetsService } from './domains/budgets/budgets.service';
 import { InstallmentsController } from './domains/installments/installments.controller';
+import { InstallmentsService } from './domains/installments/installments.service';
+import { BudgetTreatmentsService } from './domains/budgets/entities/budget-treatments/budget-treatments.service';
 
 @Module({
   imports: [DatabaseModule],
@@ -87,7 +89,8 @@ import { InstallmentsController } from './domains/installments/installments.cont
     PaymentMethodsService,
     PaymentTermsService,
     BudgetsService,
-    InstallmentsController,
+    InstallmentsService,
+    BudgetTreatmentsService,
   ],
 })
 export class AppModule {}

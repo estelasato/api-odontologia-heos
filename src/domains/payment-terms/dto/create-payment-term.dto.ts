@@ -1,4 +1,26 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsNumber, IsOptional, IsString } from "class-validator";
+
+export class InstallmentsDto {
+  @IsNumber()
+  @IsOptional()
+  numParcela?: number;
+
+  @IsNumber()
+  dias: number;
+
+  @IsNumber()
+  perc: number;
+
+  @IsNumber()
+  idFormaPag: number;
+
+  @IsNumber()
+  idCondPag: number;
+
+  @IsNumber()
+  @IsOptional()
+  id?: number | null;
+}
 
 export class CreatePaymentTermDto {
   @IsString()
@@ -10,17 +32,14 @@ export class CreatePaymentTermDto {
 
   @IsNumber()
   status: number;
+
+  @IsArray()
+  parcelas: InstallmentsDto[];
 }
 
 export class createPaymentTermDto {
   descricao: string;
-  juros?: number;
-  multa?: number;
   desconto?: number;
   status: number;
-  numParcela: number;
-  dias: number;
-  perc: number;
-  total?: number;
-  idFormaPag: number;
+  parcelas: InstallmentsDto[];
 }

@@ -23,8 +23,8 @@ export class PaymentTermsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updatePaymentTermDto: UpdatePaymentTermDto) {
-    return this.paymentTermsService.update(+id, updatePaymentTermDto);
+  update(@Param('id') id: number, @Body() updatePaymentTermDto: UpdatePaymentTermDto) {
+    return this.paymentTermsService.update(Number(id), updatePaymentTermDto);
   }
 
   @Delete(':id')
