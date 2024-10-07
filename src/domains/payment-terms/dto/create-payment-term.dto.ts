@@ -31,6 +31,14 @@ export class CreatePaymentTermDto {
   desconto?: number;  
 
   @IsNumber()
+  @IsOptional()
+  juros?: number;  
+
+  @IsNumber()
+  @IsOptional()
+  multa?: number;  
+
+  @IsNumber()
   status: number;
 
   @IsArray()
@@ -40,6 +48,8 @@ export class CreatePaymentTermDto {
 export class createPaymentTermDto {
   descricao: string;
   desconto?: number;
+  juros?: number;
+  multa?: number;
   status: number;
   parcelas: InstallmentsDto[];
 }

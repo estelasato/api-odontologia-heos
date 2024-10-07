@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AnamnesisFilter, AnamnesisTypes } from './dto/anamnesisDto';
 import * as sql from 'mssql';
@@ -166,7 +167,7 @@ export class AnamnesisService {
         }
         return data;
       } else {
-        return { error: 'Anamnese não encontrada' };
+        return new NotFoundException(`Não encontrado`)
       }
     } catch (e) {
       throw new BadRequestException(`Ocorreu um erro: ${e.message}`);

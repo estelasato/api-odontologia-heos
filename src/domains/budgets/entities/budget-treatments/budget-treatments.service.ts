@@ -31,12 +31,20 @@ export class BudgetTreatmentsService {
 
   async findByBudgetId(id: number) {
     try {
+      // const result = await this.sqlCon.query(`
+      //   SELECT ot.id as id, ot.idTratamento as idTatamento, ot.idOrcamento as idOrcamento, ot.obs as obs, ot.valor as valor, ot.qtd as qtd, ot.total as total, t.descricao as descricao
+      //   FROM orc_tratamento ot
+      //   INNER JOIN tratamentos t ON ot.idTratamento = t.id
+      //   WHERE ot.idOrcamento = ${id}
+      // `);
       const result = await this.sqlCon.query(`
-        SELECT ot.id as id, ot.obs as obs, ot.valor as valor, ot.qtd as qtd, ot.total as total, t.descricao as descricao
-        FROM orc_tratamento ot
-        INNER JOIN tratamentos t ON ot.idTratamento = t.id
-        WHERE ot.idOrcamento = ${id}
-      `);
+        SELECT orc_tratamento.*, tratamentos.descricao as descricao 
+        FROM orc_tratamento
+        JOIN tratamentos
+        ON tratamentos.id = orc_tratamento.idTratamento 
+        WHERE idOrcamento = ${id}
+        `)
+
   
       return result.recordset;
     } catch (error) {

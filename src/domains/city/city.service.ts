@@ -86,7 +86,7 @@ export class CityService {
       if (r.recordset.length > 0) { 
         return r.recordset[0];
       } else {
-        return { error: 'Cidade não encontrada' };
+        return new NotFoundException(`Não encontrado`)
       }
 
     } catch (err) {

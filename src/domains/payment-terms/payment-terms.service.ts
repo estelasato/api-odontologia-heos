@@ -19,7 +19,7 @@ export class PaymentTermsService {
 
   async create(data: createPaymentTermDto) {
     const transaction = new sql.Transaction(this.sqlCon);
-    const { descricao, status, desconto, parcelas } = data;
+    const { descricao, status, desconto, parcelas, juros, multa } = data;
     const date = new Date();
 
     try {
@@ -30,11 +30,13 @@ export class PaymentTermsService {
         .input('descricao', sql.VarChar(50), descricao)
         .input('status', sql.Int, status)
         .input('desconto', sql.Float, desconto)
+        .input('juros', sql.Float, juros)
+        .input('multa', sql.Float, multa)
         .input('dtCadastro', sql.DateTime, date)
         .input('dtUltAlt', sql.DateTime, date).query`
-        INSERT INTO condPagamento (descricao, status, desconto, dtCadastro, dtUltAlt)
+        INSERT INTO condPagamento (descricao, status, desconto, dtCadastro, dtUltAlt, juros, multa)
         OUTPUT INSERTED.id
-        VALUES (@descricao, @status, @desconto, @dtCadastro, @dtUltAlt)
+        VALUES (@descricao, @status, @desconto, @dtCadastro, @dtUltAlt, @juros, @multa)
       `;
       const condPagamentoId = result.recordset[0].id;
 

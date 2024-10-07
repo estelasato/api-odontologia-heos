@@ -33,10 +33,15 @@ export class StateService {
     }
   }
 
-  async findAll() {
+  async findAll(filter?: { codPais?: number }) {
     try {
+      let clause = ''
+      if (filter?.codPais) {
+        clause = `WHERE idPais = ${filter.codPais}`
+      }
+
       const result = await this.sqlConnection.query(
-        'SELECT * FROM estados',
+        `SELECT * FROM estados ${clause}`,
       );
 
       const data = await Promise.all(result.recordset?.map(async (e) => {
@@ -58,6 +63,7 @@ export class StateService {
 
   async findOne(id: number) {
     try {
+
       const result = await this.sqlConnection.query(
         `SELECT * FROM estados WHERE id = ${id}`,
       );
