@@ -1,18 +1,22 @@
 import { IsDate, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateAccReceivableDto {
-
+    // opcionais (vao pegar do orcamento)
+  @IsOptional()
   @IsNumber()
   idPaciente: number;
 
+  @IsOptional()
   @IsNumber()
   idOrcamento: number;
 
-  @IsNumber()
-  idFormaPag: number;
-
+  @IsOptional()
   @IsNumber()
   idProfissional: number;
+
+
+  @IsNumber()
+  idFormaPag: number;
 
   @IsOptional()
   @IsString()
@@ -40,8 +44,8 @@ export class CreateAccReceivableDto {
   valorRecebido?: number;
 
   @IsOptional()
-  @IsString()
-  situacao?: string
+  @IsNumber()
+  situacao?: number
 
   @IsDate()
   dtVencimento: Date;
@@ -56,10 +60,12 @@ export class CreateAccReceivableDto {
 }
 
 export class createAccReceivableDto {
+  // opcionais (vao pegar do orcamento)
   idPaciente: number;
   idOrcamento: number;
-  idFormaPag: number;
   idProfissional: number;
+
+  idFormaPag: number;
   obs?: string;
   parcela: number;
   desconto?: number;
@@ -67,7 +73,7 @@ export class createAccReceivableDto {
   juros?: number;
   valorParcela: number;
   valorRecebido?: number;
-  situacao?: string;
+  situacao?: number;
   dtVencimento: Date;
   dtRecebimento?: Date;
   dtCancelamento?: Date;
@@ -115,8 +121,8 @@ export class FilterAccReceivableDto {
   // valorRecebido?: number;
 
   @IsOptional()
-  @IsString()
-  situacao?: string
+  @IsNumber()
+  situacao?: number
 
   @IsOptional()
   @IsDate()
@@ -136,7 +142,7 @@ export class filterAccReceivableDto {
   idOrcamento?: number;
   idFormaPag?: number;
   idProfissional?: number;
-  situacao?: string;
+  situacao?: number;
   dtVencimento?: Date;
   dtRecebimento?: Date;
   dtCancelamento?: Date;

@@ -12,6 +12,7 @@ import {
 import { updateBudgetDto, UpdateBudgetDto } from './dto/update-budget.dto';
 import * as sql from 'mssql';
 import { BudgetTreatmentsService } from './entities/budget-treatments/budget-treatments.service';
+import { AccReceivableService } from '../acc-receivable/acc-receivable.service';
 
 @Injectable()
 export class BudgetsService {
@@ -19,10 +20,10 @@ export class BudgetsService {
     @Inject('SQL_CONNECTION')
     private readonly sqlCon: sql.ConnectionPool,
     private readonly budgetTreatmentService: BudgetTreatmentsService,
+    private readonly accReceivableService: AccReceivableService,
   ) {}
 
   async create(data: createBudgetDto) {
-    const trans = new sql.Transaction(this.sqlCon);
     const {
       idAnamnese,
       idPaciente,
@@ -31,13 +32,12 @@ export class BudgetsService {
       total,
       status,
       tratamentos,
+      contasReceber,
     } = data;
     const date = new Date();
 
     try {
-      await trans.begin();
-      const tableRequest = new sql.Request(trans);
-      const result = await tableRequest
+      const result = await this.sqlCon.request()
         .input('idAnamnese', sql.Int, idAnamnese)
         .input('idPaciente', sql.Int, idPaciente)
         .input('idProfissional', sql.Int, idProfissional)
@@ -54,8 +54,7 @@ export class BudgetsService {
       const budgetId = result.recordset[0].id;
 
       for (let t of tratamentos) {
-        const tratamentosRequest = new sql.Request(trans);
-        await tratamentosRequest
+        await this.sqlCon.request()
           .input('idOrcamento', sql.Int, budgetId)
           .input('idTratamento', sql.Int, t.idTratamento)
           .input('obs', sql.VarChar(100), t.obs)
@@ -65,12 +64,20 @@ export class BudgetsService {
           INSERT INTO orc_tratamento (idOrcamento, idTratamento, obs, qtd, total, valor)
           VALUES (@idOrcamento, @idTratamento, @obs, @qtd, @total, @valor)
         `;
+
+        for (let c of contasReceber) {
+          // const contasRequest = new sql.Request(trans);
+          await this.accReceivableService.create({
+            ...c,
+            idPaciente,
+            idOrcamento: budgetId,
+            idProfissional,
+          })
+        }
       }
 
-      await trans.commit();
       return { message: 'Criado com sucesso!' };
     } catch (error) {
-      await trans.rollback();
       throw new Error(`Erro : ${error.message}`);
     }
   }
@@ -131,6 +138,7 @@ export class BudgetsService {
       status,
       total,
       tratamentos,
+      contasReceber,
     } = data;
     const trans = new sql.Transaction(this.sqlCon);
     await trans.begin();
@@ -170,7 +178,6 @@ export class BudgetsService {
               if (t.id && !ids?.includes(t.id)) {
                 // const orcTratamRequest = new sql.Request(trans);
                 // orcTratamRequest
-                console.log(t.id, 'id', ids);
                 await this.sqlCon.request()
                   .input('idOrcTrat', sql.Int, t.id)
                   .input('idTrat', sql.Int, t.idTratamento)

@@ -10,7 +10,7 @@ import * as sql from 'mssql';
           user: 'esteladb',
           password: 'esteladb',
           server: 'DESKTOP-QCUFJAC',
-          database: 'odontodb',
+          database: 'odontologiadb',
           options: {
             encrypt: true,
             trustServerCertificate: true,

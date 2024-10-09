@@ -43,6 +43,8 @@ import { BudgetsService } from './domains/budgets/budgets.service';
 import { InstallmentsController } from './domains/installments/installments.controller';
 import { InstallmentsService } from './domains/installments/installments.service';
 import { BudgetTreatmentsService } from './domains/budgets/entities/budget-treatments/budget-treatments.service';
+import { AccReceivableService } from './domains/acc-receivable/acc-receivable.service';
+import { AccReceivableController } from './domains/acc-receivable/acc-receivable.controller';
 
 @Module({
   imports: [DatabaseModule],
@@ -66,6 +68,7 @@ import { BudgetTreatmentsService } from './domains/budgets/entities/budget-treat
     PaymentTermsController,
     BudgetsController,
     InstallmentsController,
+    AccReceivableController,
   ],
   providers: [
     CountryService,
@@ -91,6 +94,7 @@ import { BudgetTreatmentsService } from './domains/budgets/entities/budget-treat
     BudgetsService,
     InstallmentsService,
     BudgetTreatmentsService,
+    AccReceivableService
   ],
 })
 export class AppModule {}

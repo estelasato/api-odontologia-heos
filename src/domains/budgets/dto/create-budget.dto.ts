@@ -1,4 +1,5 @@
 import { IsArray, IsDateString, IsNumber, IsOptional, IsString } from "class-validator";
+import { CreateAccReceivableDto, createAccReceivableDto, FilterAccReceivableDto } from "src/domains/acc-receivable/dto/create-acc-receivable.dto";
 
 export class BudgetTreatmentDto{
   @IsOptional()
@@ -59,6 +60,9 @@ export class CreateBudgetDto {
 
   @IsArray()
   tratamentos: BudgetTreatmentDto[];
+
+  @IsArray()
+  contasReceber: CreateAccReceivableDto[];
 }
 
 export class createBudgetDto {
@@ -70,6 +74,7 @@ export class createBudgetDto {
   idCondPagamento: number;
 
   tratamentos: budgetTreatmentDto[];
+  contasReceber: createAccReceivableDto[]
 }
 
 export class BudgetFilterDto {

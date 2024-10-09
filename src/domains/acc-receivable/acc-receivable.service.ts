@@ -47,14 +47,14 @@ export class AccReceivableService {
         .input('juros', sql.Decimal, juros)
         .input('valorParcela', sql.Decimal, valorParcela)
         .input('valorRecebido', sql.Decimal, valorRecebido)
-        .input('situacao', sql.VarChar, situacao)
+        .input('situacao', sql.Int, situacao)
         .input('dtVencimento', sql.DateTime, dtVencimento)
         .input('dtRecebimento', sql.DateTime, dtRecebimento)
         .input('dtCancelamento', sql.DateTime, dtCancelamento)
         .input('dtCadastro', date)
         .input('dtUltAlt', date).query(`
         INSERT INTO contasReceber (idPaciente, idOrcamento, idFormaPag, idProfissional, obs, parcela, desconto, multa, juros, valorParcela, valorRecebido, situacao, dtVencimento, dtRecebimento, dtCancelamento, dtCadastro, dtUltAlt)
-        VALUES (@idPaciente, @idOrcamento, @idFormaPag, @idProfissional, @obs, @parcela, @desconto, @multa, @juros, @valoarParcela, @valorRecebido, @situacao, @dtVencimento, @dtRecebimento, @dtCancelamento, @dtCadastro, @dtUltAlt)
+        VALUES (@idPaciente, @idOrcamento, @idFormaPag, @idProfissional, @obs, @parcela, @desconto, @multa, @juros, @valorParcela, @valorRecebido, @situacao, @dtVencimento, @dtRecebimento, @dtCancelamento, @dtCadastro, @dtUltAlt)
       `);
 
       const inserted = result.recordset[0];
