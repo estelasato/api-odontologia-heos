@@ -14,7 +14,7 @@ export class AccReceivableService {
     private readonly sqlCon: sql.ConnectionPool,
   ) {}
 
-  async create(data: createAccReceivableDto) {
+  async create(data: createAccReceivableDto, transaction?: sql.Transaction) {
     const {
       dtVencimento,
       idFormaPag,
@@ -34,8 +34,8 @@ export class AccReceivableService {
     } = data;
     const date = new Date();
     try {
-      const result = await this.sqlCon
-        .request()
+      const request = transaction ? new sql.Request(transaction) : this.sqlCon.request();
+      const result = await request
         .input('idPaciente', sql.Int, idPaciente)
         .input('idOrcamento', sql.Int, idOrcamento)
         .input('idFormaPag', sql.Int, idFormaPag)
@@ -51,14 +51,14 @@ export class AccReceivableService {
         .input('dtVencimento', sql.DateTime, dtVencimento)
         .input('dtRecebimento', sql.DateTime, dtRecebimento)
         .input('dtCancelamento', sql.DateTime, dtCancelamento)
-        .input('dtCadastro', date)
-        .input('dtUltAlt', date).query(`
-        INSERT INTO contasReceber (idPaciente, idOrcamento, idFormaPag, idProfissional, obs, parcela, desconto, multa, juros, valorParcela, valorRecebido, situacao, dtVencimento, dtRecebimento, dtCancelamento, dtCadastro, dtUltAlt)
-        VALUES (@idPaciente, @idOrcamento, @idFormaPag, @idProfissional, @obs, @parcela, @desconto, @multa, @juros, @valorParcela, @valorRecebido, @situacao, @dtVencimento, @dtRecebimento, @dtCancelamento, @dtCadastro, @dtUltAlt)
-      `);
-
-      const inserted = result.recordset[0];
-      return { message: 'Salvo com sucesso!', inserted };
+        .input('dtCadastro', sql.DateTime, date)
+        .input('dtUltAlt', sql.DateTime, date)
+        .query(`
+          INSERT INTO contasReceber (idPaciente, idOrcamento, idFormaPag, idProfissional, obs, parcela, desconto, multa, juros, valorParcela, valorRecebido, situacao, dtVencimento, dtRecebimento, dtCancelamento, dtCadastro, dtUltAlt)
+          OUTPUT INSERTED.*
+          VALUES (@idPaciente, @idOrcamento, @idFormaPag, @idProfissional, @obs, @parcela, @desconto, @multa, @juros, @valorParcela, @valorRecebido, @situacao, @dtVencimento, @dtRecebimento, @dtCancelamento, @dtCadastro, @dtUltAlt)
+        `);
+      console.log(result.recordset, 'a')
     } catch (e) {
       throw new Error(`Ocorreu um erro: ${e.message}`);
     }
@@ -89,7 +89,10 @@ export class AccReceivableService {
 
     try {
       const result = await this.sqlCon.query(`
-          SELECT * FROM contasReceber ${filters}
+          SELECT contasReceber.*, pacientes.nome as nomePaciente, profissionais.nome as nomeProfissional 
+          FROM contasReceber ${filters}
+          JOIN pacientes ON contasReceber.idPaciente = pacientes.id
+          JOIN profissionais ON contasReceber.idProfissional = profissionais.id
         `)
       return result.recordset;
     } catch (e) {

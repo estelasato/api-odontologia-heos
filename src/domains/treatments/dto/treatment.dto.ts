@@ -6,6 +6,7 @@ export class TreatmentDto {
   @IsString()
   descricao: string;
 
+  @IsOptional()
   @IsDateString()
   dataInicio: Date;
 
@@ -55,7 +56,7 @@ export class filterTreatmentDto {
 
 export class TreatmentTypes {
   descricao?: string;
-  dataInicio: Date;
+  dataInicio?: Date;
   dataFim?: Date;
   dente?:string;
   idPaciente: number;

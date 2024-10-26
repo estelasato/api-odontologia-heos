@@ -12,7 +12,7 @@ import {
 
 export enum StatusType {
   AGENDADO,
-  CANCELADO,
+  // CANCELADO,
   CONFIRMADO,
   EM_ATENDIMENTO,
   REALIZADO,
@@ -20,11 +20,11 @@ export enum StatusType {
 }
 
 export class ScheduleFilterDto {
-  // @IsOptional()
-  // idProfissional?: number;
+ @IsOptional()
+ idProfissional?: number;
 
-  // @IsOptional()
-  // idPaciente?: number;
+ @IsOptional()
+ idPaciente?: number;
 
   @IsOptional()
   @IsString()
@@ -93,7 +93,7 @@ export class ScheduleDto {
 export class ScheduleTypes {
   idPaciente: number;
   idProfissional: number;
-  horario: Date;
+  horario: Date | string;
   duracao?: number;
   obs?: string;
   status: StatusType;

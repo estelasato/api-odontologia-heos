@@ -35,9 +35,14 @@ export class BudgetsService {
       contasReceber,
     } = data;
     const date = new Date();
+    const trans = new sql.Transaction(this.sqlCon);
 
     try {
-      const result = await this.sqlCon.request()
+      await trans.begin();
+      const request = new sql.Request(trans);
+      request.queryTimeout = 60000; // Aumentar o tempo limite da consulta para 60 segundos
+
+      const result = await request
         .input('idAnamnese', sql.Int, idAnamnese)
         .input('idPaciente', sql.Int, idPaciente)
         .input('idProfissional', sql.Int, idProfissional)
@@ -45,39 +50,46 @@ export class BudgetsService {
         .input('sumTotal', sql.Decimal, total)
         .input('status', sql.VarChar(20), status)
         .input('dtCadastro', sql.DateTime, date)
-        .input('dtUltAlt', sql.DateTime, date).query`
-        INSERT INTO orcamentos (idAnamnese, idPaciente, idProfissional, idCondPagamento, total, status, dtCadastro, dtUltAlt)
-        VALUES (@idAnamnese, @idPaciente, @idProfissional, @idCondPagamento, @sumTotal, @status, @dtCadastro, @dtUltAlt)
-        SELECT * FROM orcamentos WHERE id = SCOPE_IDENTITY()
-        `;
-      console.log(result.recordset, 'aa');
-      const budgetId = result.recordset[0].id;
+        .input('dtUltAlt', sql.DateTime, date).query(`
+          INSERT INTO orcamentos (idAnamnese, idPaciente, idProfissional, idCondPagamento, total, status, dtCadastro, dtUltAlt)
+          OUTPUT INSERTED.*
+          VALUES (@idAnamnese, @idPaciente, @idProfissional, @idCondPagamento, @sumTotal, @status, @dtCadastro, @dtUltAlt);
+        `);
 
+      if (!result.recordset || result.recordset.length === 0) {
+        throw new Error('Falha ao inserir orçamento.');
+      }
+      const budgetId = result.recordset[0].id;
       for (let t of tratamentos) {
-        await this.sqlCon.request()
+        const request = new sql.Request(trans);
+        await request
           .input('idOrcamento', sql.Int, budgetId)
           .input('idTratamento', sql.Int, t.idTratamento)
           .input('obs', sql.VarChar(100), t.obs)
           .input('qtd', sql.Int, t.qtd)
           .input('total', sql.Decimal, t.total)
-          .input('valor', sql.Decimal, t.valor).query`
-          INSERT INTO orc_tratamento (idOrcamento, idTratamento, obs, qtd, total, valor)
-          VALUES (@idOrcamento, @idTratamento, @obs, @qtd, @total, @valor)
-        `;
+          .input('valor', sql.Decimal, t.valor).query(`
+            INSERT INTO orc_tratamento (idOrcamento, idTratamento, obs, qtd, total, valor)
+            VALUES (@idOrcamento, @idTratamento, @obs, @qtd, @total, @valor);
+          `);
+      }
 
-        for (let c of contasReceber) {
-          // const contasRequest = new sql.Request(trans);
-          await this.accReceivableService.create({
+      for (let c of contasReceber) {
+        await this.accReceivableService.create(
+          {
             ...c,
             idPaciente,
             idOrcamento: budgetId,
             idProfissional,
-          })
-        }
+          },
+          trans,
+        );
       }
 
+      await trans.commit();
       return { message: 'Criado com sucesso!' };
     } catch (error) {
+      await trans.rollback();
       throw new Error(`Erro : ${error.message}`);
     }
   }
@@ -119,8 +131,13 @@ export class BudgetsService {
       );
 
       const tratamentos = await this.budgetTreatmentService.findByBudgetId(id);
+      const contasReceber = await this.accReceivableService.findAll({
+        idOrcamento: id,
+      });
 
       result.recordset[0].tratamentos = tratamentos;
+      result.recordset[0].contasReceber = contasReceber;
+
       if (result.recordset.length === 0) {
         throw new NotFoundException('Orçamento não encontrado');
       }
@@ -146,9 +163,10 @@ export class BudgetsService {
       // const tableRequest = new sql.Request(trans);
       // tableRequest.queryTimeout = 60000; // Aumentar o tempo limite da consulta para 60 segundos
       const date = new Date();
-  
-      const result = await this.sqlCon.request()
-      // const result = await tableRequest
+
+      const result = await this.sqlCon
+        .request()
+        // const result = await tableRequest
         .input('idAnamnese', sql.Int, idAnamnese)
         .input('idPaciente', sql.Int, idPaciente)
         .input('idProfissional', sql.Int, idProfissional)
@@ -156,15 +174,14 @@ export class BudgetsService {
         .input('sumTotal', sql.Decimal, total)
         .input('status', sql.VarChar(20), status)
         .input('dtUltAlt', sql.DateTime, date)
-        .input('id', sql.Int, id)
-        .query(`
+        .input('id', sql.Int, id).query(`
           UPDATE orcamentos 
           SET idAnamnese = @idAnamnese, idPaciente = @idPaciente, idProfissional = @idProfissional, idCondPagamento = @idCondPagamento, total = @sumTotal, status = @status, dtUltAlt = @dtUltAlt
           WHERE id = @id;
         `);
-  
+
       const listTratam = await this.budgetTreatmentService.findByBudgetId(id);
-  
+
       if (listTratam.length > 0 || tratamentos.length > 0) {
         if (
           listTratam.length > 0 &&
@@ -178,10 +195,10 @@ export class BudgetsService {
               if (t.id && !ids?.includes(t.id)) {
                 // const orcTratamRequest = new sql.Request(trans);
                 // orcTratamRequest
-                await this.sqlCon.request()
+                await this.sqlCon
+                  .request()
                   .input('idOrcTrat', sql.Int, t.id)
-                  .input('idTrat', sql.Int, t.idTratamento)
-                  .query(`
+                  .input('idTrat', sql.Int, t.idTratamento).query(`
                     DELETE FROM orc_tratamento 
                     WHERE id = @idOrcTrat AND idOrcamento = @id AND idTratamento = @idTrat;
                   `);
@@ -189,12 +206,13 @@ export class BudgetsService {
             }),
           );
         }
-  
+
         await Promise.all(
-          tratamentos?.map(async(t) => {
+          tratamentos?.map(async (t) => {
             // const createAssociative = new sql.Request(trans);
             // createAssociative
-            await this.sqlCon.request()
+            await this.sqlCon
+              .request()
               .input('idOrcamento', sql.Int, id)
               .input('idTratamento', sql.Int, t.idTratamento)
               .input('obs', sql.VarChar(100), t.obs)
@@ -217,9 +235,50 @@ export class BudgetsService {
           }),
         );
       }
-  
+
+      const listAcc = await this.accReceivableService.findAll({
+        idOrcamento: id,
+        idPaciente: idPaciente,
+        idProfissional: idProfissional,
+      });
+
+      
+      if (listAcc.length > 0 || contasReceber.length > 0) {
+        if (
+          listAcc.length > 0 &&
+          ((listAcc.length === contasReceber.length &&
+            contasReceber.some((t) => !t.id)) ||
+            listAcc.length !== contasReceber.length)
+        ) {
+          const ids = contasReceber?.map((t) => t.id && t.id);
+          await Promise.all(
+            listAcc?.map(async (t) => {
+              if (t.id && !ids?.includes(t.id)) {
+                // const orcTratamRequest = new sql.Request(trans);
+                // orcTratamRequest
+                await this.sqlCon
+                  .request()
+                  .input('idContaRec', sql.Int, t.id).query(`
+                    DELETE FROM contasReceber
+                    WHERE id = @idContaRec AND idOrcamento = @id;
+                  `);
+              }
+            }),
+          );
+        }
+        for (let c of contasReceber) {
+          await this.accReceivableService.create(
+            {
+              ...c,
+              idPaciente,
+              idOrcamento: id,
+              idProfissional,
+            },
+          );
+        }
+      }
       // await trans.commit();
-  
+
       if (result.rowsAffected[0] === 1) {
         return { message: 'Atualizado com sucesso!' };
       } else {

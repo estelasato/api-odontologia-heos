@@ -1,6 +1,9 @@
 import { IsDate, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateAccReceivableDto {
+  @IsOptional()
+  @IsNumber()
+  id?: number;
     // opcionais (vao pegar do orcamento)
   @IsOptional()
   @IsNumber()
@@ -61,6 +64,7 @@ export class CreateAccReceivableDto {
 
 export class createAccReceivableDto {
   // opcionais (vao pegar do orcamento)
+  id?: number;
   idPaciente: number;
   idOrcamento: number;
   idProfissional: number;
