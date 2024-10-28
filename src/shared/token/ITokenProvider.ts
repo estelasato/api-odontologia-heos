@@ -16,7 +16,7 @@ export type DecodeInput = {
 }
 
 export interface DecodeOutput extends JwtPayload {
-  id: string
+  id: string | number
   email: string
   role: UserRole
   isActive: true

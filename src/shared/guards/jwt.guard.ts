@@ -7,7 +7,7 @@ import * as sql from 'mssql';
 import { UserRole } from "../strategies/jwt.strategy";
 
 export type AuthenticatedPayload = {
-  id: string
+  id: string | number
   email: string
   role: UserRole
   isActive: true
@@ -41,7 +41,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
       const result = await this.tokenProvider.decode({ jwtSecret: process.env.JWT_SECRET, token })
 
       const user = await this.sqlConnection.query(
-        `select * from users where id=${result.id} AND ativo=1`,
+        `select * from usuarios where id=${result.id} AND ativo=1`,
       )
 
       if (!user) throw new UnauthorizedException(['Solicitação não autorizada.'])
@@ -54,8 +54,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
     }
   }
 
-  handleRequest<Account extends AuthenticatedPayload>(_: Error, user: Account): Account {
-    if (user) return user
+  handleRequest<Account extends AuthenticatedPayload>(_: Error, usuario: Account): Account {
+    if (usuario) return usuario
     else throw new UnauthorizedException(['Solicitação não autorizada.'])
   }
 

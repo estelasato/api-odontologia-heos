@@ -9,7 +9,7 @@ export enum UserRole {
 }
 // type UserRole = 'admin' | 'func' | 'prof'
 type AuthenticatedPayload = {
-  id: string
+  id: string | number
   email: string
   role: UserRole
   isActive: true
