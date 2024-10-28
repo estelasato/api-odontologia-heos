@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from '@
 import { AccReceivableService } from './acc-receivable.service';
 import { CreateAccReceivableDto, FilterAccReceivableDto } from './dto/create-acc-receivable.dto';
 import { UpdateAccReceivableDto } from './dto/update-acc-receivable.dto';
+import { AllowPublicAccess } from 'src/shared/decorators/allow-public-access.decorator';
 
 @Controller('acc-receivable')
 export class AccReceivableController {

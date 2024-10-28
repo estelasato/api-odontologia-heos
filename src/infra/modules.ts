@@ -18,6 +18,8 @@ import { ResponsiblePartyModule } from "src/domains/responsible-party/responsibl
 import { ScheduleModule } from "src/domains/schedule/schedule.module";
 import { StateModule } from "src/domains/state/state.module";
 import { TreatmentsModule } from "src/domains/treatments/treatments.module";
+import { UsuariosModule } from "src/domains/usuarios/usuarios.module";
+import { TokenModule } from "src/shared/token/token.module";
 
 export const modules = [
   AccReceivableModule,
@@ -40,4 +42,6 @@ export const modules = [
   ScheduleModule,
   ResponsiblePartyModule,
   TreatmentsModule,
+  TokenModule,
+  UsuariosModule,
 ]
