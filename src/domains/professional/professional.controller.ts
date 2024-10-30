@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Req } from '@nestjs/common';
 import { ProfessionalService } from './professional.service';
 import { ProfessionalDto } from './dto/professional.dto';
 
@@ -7,8 +7,9 @@ export class ProfessionalController {
   constructor(private readonly professionalService: ProfessionalService) {}
 
   @Post()
-  create(@Body() createProfessionalDto: ProfessionalDto) {
-    return this.professionalService.create(createProfessionalDto);
+  create(@Body() data: ProfessionalDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.professionalService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -22,8 +23,9 @@ export class ProfessionalController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateProfessionalDto: ProfessionalDto) {
-    return this.professionalService.update(+id, updateProfessionalDto);
+  update(@Param('id') idProf: number, @Body() data: ProfessionalDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.professionalService.update(+idProf, {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')

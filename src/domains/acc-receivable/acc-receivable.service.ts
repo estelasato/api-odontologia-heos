@@ -86,13 +86,14 @@ export class AccReceivableService {
     if (idProfissional) clause.push(`idProfissional = ${idProfissional}`);
     if (situacao) clause.push(`situacao = ${situacao}`);
     const filters = clause.length > 0 ? `WHERE ${clause.join(' AND ')}` : '';
-
+    console.log(filters, 'filters')
     try {
       const result = await this.sqlCon.query(`
           SELECT contasReceber.*, pacientes.nome as nomePaciente, profissionais.nome as nomeProfissional 
-          FROM contasReceber ${filters}
+          FROM contasReceber
           JOIN pacientes ON contasReceber.idPaciente = pacientes.id
           JOIN profissionais ON contasReceber.idProfissional = profissionais.id
+           ${filters}
         `)
       return result.recordset;
     } catch (e) {

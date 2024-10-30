@@ -44,8 +44,6 @@ export class BudgetTreatmentsService {
         ON tratamentos.id = orc_tratamento.idTratamento 
         WHERE idOrcamento = ${id}
         `)
-
-  
       return result.recordset;
     } catch (error) {
       throw new Error(`Erro ao buscar tratamentos: ${error}`);

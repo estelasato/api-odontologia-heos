@@ -40,14 +40,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
 
       const result = await this.tokenProvider.decode({ jwtSecret: process.env.JWT_SECRET, token })
 
-      const user = await this.sqlConnection.query(
+      const usuario = await this.sqlConnection.query(
         `select * from usuarios where id=${result.id} AND ativo=1`,
       )
 
-      if (!user) throw new UnauthorizedException(['Solicitação não autorizada.'])
+      if (!usuario.recordset[0]) throw new UnauthorizedException(['Solicitação não autorizada.'])
 
-      request.user = user;
-
+      request.usuario = usuario.recordset[0];
       return true;
     } catch (e) {
       throw new UnauthorizedException(['Solicitação não autorizada.'])

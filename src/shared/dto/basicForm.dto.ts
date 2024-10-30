@@ -11,6 +11,13 @@ export class BasicFormDto {
   @IsNumber()
   ativo: number
 
+  @IsOptional()
+  @IsNumber()
+  idUser?: number
+
+  @IsOptional()
+  @IsString()
+  typeUser?: string
 }
 
 export class BasicFormTypes {

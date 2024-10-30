@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { AllowPublicAccess } from 'src/shared/decorators/allow-public-access.decorator';
 import { LoginInputDto, LoginOutputDto } from './dto/auth.dto';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { Authenticated } from 'src/shared/decorators/authenticated.decorator';
 
 @Controller('usuarios')
 export class UsuariosController {

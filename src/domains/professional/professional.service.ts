@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as sql from 'mssql';
 import { CityService } from '../city/city.service';
 import { Professional, ProfessionalDto } from './dto/professional.dto';
@@ -13,8 +18,27 @@ export class ProfessionalService {
 
   async create(data: Professional) {
     const {
-      nome, cpfCnpj, rg, dtNascimento, email, celular, sexo, estCivil, cro, certificacoes, especialidade, formacoes, 
-      cep, bairro, complemento, idCidade, logradouro, numero, ativo,
+      nome,
+      cpfCnpj,
+      rg,
+      dtNascimento,
+      email,
+      celular,
+      sexo,
+      estCivil,
+      cro,
+      certificacoes,
+      especialidade,
+      formacoes,
+      cep,
+      bairro,
+      complemento,
+      idCidade,
+      logradouro,
+      numero,
+      ativo,
+      idUser,
+      typeUser,
     } = data;
 
     try {
@@ -41,9 +65,11 @@ export class ProfessionalService {
         .input('idCidade', sql.Int, idCidade)
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', sql.DateTime, date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date).query`
-        INSERT INTO profissionais (nome, cpfCnpj, rg, dtNascimento, email, celular, sexo, estCivil, cro, certificacoes, especialidade, formacoes, cep, logradouro, bairro, numero, complemento, idCidade, ativo, dtCadastro, dtUltAlt)
-        VALUES (@nome, @cpfCnpj, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @cro, @certificacoes, @especialidade, @formacoes, @cep, @logradouro, @bairro, @numero, @complemento, @idCidade, @ativo, @dtCadastro, @dtUltAlt)
+        INSERT INTO profissionais (idUser, typeUser, nome, cpfCnpj, rg, dtNascimento, email, celular, sexo, estCivil, cro, certificacoes, especialidade, formacoes, cep, logradouro, bairro, numero, complemento, idCidade, ativo, dtCadastro, dtUltAlt)
+        VALUES (@idUser, @typeUser, @nome, @cpfCnpj, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @cro, @certificacoes, @especialidade, @formacoes, @cep, @logradouro, @bairro, @numero, @complemento, @idCidade, @ativo, @dtCadastro, @dtUltAlt)
       `;
       return { message: 'Profissional criado com sucesso!' };
     } catch (err) {
@@ -59,8 +85,7 @@ export class ProfessionalService {
       if (result.recordset.length === 0) {
         return { message: 'Nenhum profissional encontrado' };
       } else return result.recordset;
-
-    } catch(err) {
+    } catch (err) {
       throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
@@ -74,19 +99,38 @@ export class ProfessionalService {
       const cep = await this.cityService.findCEP(r.recordset[0].idCidade);
 
       if (r.recordset.length > 0) {
-        return {...r.recordset[0], ...cep};
+        return { ...r.recordset[0], ...cep };
       } else {
-        return { err: 'profissional não encontrado!'}
+        return { err: 'profissional não encontrado!' };
       }
-    } catch(e) {
+    } catch (e) {
       return e;
     }
   }
 
   async update(id: number, data: Professional) {
     const {
-      nome, cpfCnpj, rg, dtNascimento, email, celular, sexo, estCivil, cro, certificacoes, especialidade, formacoes, 
-      cep, bairro, complemento, idCidade, logradouro, numero, ativo,
+      nome,
+      cpfCnpj,
+      rg,
+      dtNascimento,
+      email,
+      celular,
+      sexo,
+      estCivil,
+      cro,
+      certificacoes,
+      especialidade,
+      formacoes,
+      cep,
+      bairro,
+      complemento,
+      idCidade,
+      logradouro,
+      numero,
+      ativo,
+      idUser,
+      typeUser,
     } = data;
 
     try {
@@ -113,9 +157,11 @@ export class ProfessionalService {
         .input('idCidade', sql.Int, idCidade)
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', sql.DateTime, date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date).query(`
         UPDATE profissionais
-        SET nome = @nome, cpfCnpj = @cpfCnpj, rg = @rg, dtNascimento = @dtNascimento, email = @email, celular = @celular, 
+        SET idUser=@idUser, typeUser=@typeUser, nome = @nome, cpfCnpj = @cpfCnpj, rg = @rg, dtNascimento = @dtNascimento, email = @email, celular = @celular, 
         sexo = @sexo, estCivil = @estCivil, cro = @cro, certificacoes = @certificacoes, 
         especialidade = @especialidade, formacoes = @formacoes, cep = @cep, logradouro = @logradouro, bairro = @bairro, 
         numero = @numero, complemento = @complemento, idCidade = @idCidade, ativo = @ativo, dtUltAlt = @dtUltAlt
@@ -123,7 +169,9 @@ export class ProfessionalService {
         `);
 
       if (r.recordset[0].rowsAffected === 0) {
-        throw new NotFoundException('Profissional não encontrado para atualização'); // Se nenhuma linha foi atualizada
+        throw new NotFoundException(
+          'Profissional não encontrado para atualização',
+        ); // Se nenhuma linha foi atualizada
       }
 
       return { message: 'Profissional atualizado com sucesso!' };
@@ -137,17 +185,19 @@ export class ProfessionalService {
       const deleteResult = await this.sqlConnection
         .request()
         .query(
-          `delete from profissionais where id = ${id}; select @@ROWCOUNT AS rowsAffected;`
+          `delete from profissionais where id = ${id}; select @@ROWCOUNT AS rowsAffected;`,
         );
       if (deleteResult.recordset[0].rowsAffected === 0) {
-        throw new NotFoundException('Profissional não encontrado para exclusão');
+        throw new NotFoundException(
+          'Profissional não encontrado para exclusão',
+        );
       }
 
       return {
         message: 'Profissional excluído com sucesso!',
-      }
-    } catch(err) {
-      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);;
+      };
+    } catch (err) {
+      throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }
 }

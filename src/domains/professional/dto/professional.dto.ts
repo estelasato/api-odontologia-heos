@@ -52,7 +52,6 @@ export class ProfessionalDto extends AddressDto {
   @IsOptional()
   @IsNumber()
 	idCidade?: number
-
 }
 
 export class Professional extends AddressType{
@@ -70,4 +69,7 @@ export class Professional extends AddressType{
   certificacoes?: string
   ativo: number
   idCidade?: number
+
+  idUser?: number
+  typeUser?: string
 }

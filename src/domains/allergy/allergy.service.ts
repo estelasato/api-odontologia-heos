@@ -15,7 +15,7 @@ export class AllergyService {
   ) {}
 
   async create(data: BasicFormDto): Promise<any> {
-    const { nome, descricao, ativo } = data;
+    const { nome, descricao, ativo, idUser, typeUser } = data;
 
     try {
       const now = new Date();
@@ -25,9 +25,11 @@ export class AllergyService {
         .input('descricao', sql.VarChar, descricao)
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', sql.DateTime, now)
+        .input('idUser', sql.Int, data.idUser)
+        .input('typeUser', sql.VarChar, typeUser)
         .input('dtUltAlt', sql.DateTime, now).query`
-          INSERT INTO alergias (nome, descricao, ativo, dtCadastro, dtUltAlt)
-          VALUES (@nome, @descricao, @ativo, @dtCadastro, @dtUltAlt);
+          INSERT INTO alergias (nome, descricao, ativo, dtCadastro, dtUltAlt, idUser, typeUser)
+          VALUES (@nome, @descricao, @ativo, @dtCadastro, @dtUltAlt, @idUser, @typeUser);
         `;
       return {
         message: 'Criado com sucesso!',
@@ -61,7 +63,7 @@ export class AllergyService {
   }
 
   async update(id: number, data: BasicFormDto) {
-    const { nome, descricao, ativo } = data;
+    const { nome, descricao, ativo, idUser, typeUser } = data;
 
     try {
       const now = new Date();
@@ -71,9 +73,11 @@ export class AllergyService {
         .input('nome', sql.VarChar(20), nome)
         .input('descricao', sql.VarChar(100), descricao)
         .input('ativo', sql.Bit, ativo)
+        .input('idUser', sql.Int, data.idUser)
+        .input('typeUser', sql.VarChar, typeUser)
         .input('dtUltAlt', sql.DateTime, now).query`
         UPDATE alergias 
-        SET nome=@nome, descricao=@descricao, ativo=@ativo, dtUltAlt=@dtUltAlt 
+        SET nome=@nome, descricao=@descricao, ativo=@ativo, dtUltAlt=@dtUltAlt, idUser=@idUser, typeUser=@typeUser
         WHERE id=@id; SELECT @@ROWCOUNT AS ROWS;
       `;
 

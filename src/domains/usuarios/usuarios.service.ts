@@ -19,7 +19,6 @@ export class UsuariosService {
   ) {}
   async login(data: LoginInputDto) {
     try {
-      console.log(data)
       let result = await this.sqlConnection.query(
         `SELECT * from USUARIOS where email = '${data.email}'`,
       );
@@ -54,7 +53,6 @@ export class UsuariosService {
       });
 
       delete usuario.senha;
-      console.log(token, usuario, 'aa');
       return {
         token,
         usuario,

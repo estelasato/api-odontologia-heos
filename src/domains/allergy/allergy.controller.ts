@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Req } from '@nestjs/common';
 import { AllergyService } from './allergy.service';
 import { BasicFormDto } from 'src/shared/dto/basicForm.dto';
 
@@ -7,8 +7,9 @@ export class AllergyController {
   constructor(private readonly allergyService: AllergyService) {}
 
   @Post()
-  create(@Body() data: BasicFormDto) {
-    return this.allergyService.create(data);
+  create(@Body() data: BasicFormDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.allergyService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -22,8 +23,9 @@ export class AllergyController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() data: BasicFormDto) {
-    return this.allergyService.update(id, data);
+  update(@Param('id') idAllergy: number, @Body() data: BasicFormDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.allergyService.update(idAllergy, {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')
