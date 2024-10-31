@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query, Req } from '@nestjs/common';
 import { ScheduleService } from './schedule.service';
 import { ScheduleDto, ScheduleFilterDto } from './dto/schedule.dto';
 
@@ -7,8 +7,9 @@ export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
   @Post()
-  create(@Body() createSchedule: ScheduleDto) {
-    return this.scheduleService.create(createSchedule);
+  create(@Body() data: ScheduleDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.scheduleService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -22,8 +23,9 @@ export class ScheduleController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() data: ScheduleDto) {
-    return this.scheduleService.update(+id, data.horario, data);
+  update(@Param('id') idSchedule: string, @Body() data: ScheduleDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.scheduleService.update(+idSchedule, data.horario, {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')

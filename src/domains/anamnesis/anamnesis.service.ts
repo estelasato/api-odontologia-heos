@@ -22,7 +22,7 @@ export class AnamnesisService {
   ) {}
 
   async create(data: AnamnesisTypes) {
-    const { idPaciente, obs, queixas, doencas, medicamentos, alergias } = data;
+    const { idPaciente, obs, queixas, doencas, medicamentos, alergias, idUser, typeUser } = data;
     const date = new Date();
     try {
       const result = await this.sqlCon
@@ -31,9 +31,11 @@ export class AnamnesisService {
         .input('obs', sql.VarChar, obs)
         .input('queixas', sql.VarChar, queixas)
         .input('dtCadastro', date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar, typeUser)
         .input('dtUltAlt', date).query(`
-        INSERT INTO anamneses (idPaciente, obs, queixas, dtCadastro, dtUltAlt)
-        VALUES (@idPaciente, @obs, @queixas, @dtCadastro, @dtUltAlt);  
+        INSERT INTO anamneses (idPaciente, obs, queixas, dtCadastro, dtUltAlt, idUser, typeUser)
+        VALUES (@idPaciente, @obs, @queixas, @dtCadastro, @dtUltAlt, @idUser, @typeUser);  
         SELECT * FROM anamneses WHERE id = SCOPE_IDENTITY()
       `);
       const inserted = result.recordset[0];
@@ -175,7 +177,7 @@ export class AnamnesisService {
   }
 
   async update(id: number, data: AnamnesisTypes) {
-    const { idPaciente, obs, queixas, alergias, doencas, medicamentos } = data;
+    const { idPaciente, obs, queixas, alergias, doencas, medicamentos, idUser, typeUser } = data;
     const date = new Date();
 
     try {
@@ -184,9 +186,11 @@ export class AnamnesisService {
         .input('idPaciente', sql.Int, idPaciente)
         .input('obs', sql.VarChar, obs)
         .input('queixas', sql.VarChar, queixas)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query(`
           UPDATE anamneses
-          SET idPaciente = @idPaciente, obs = @obs, queixas = @queixas, dtUltAlt = @dtUltAlt
+          SET idPaciente = @idPaciente, obs = @obs, queixas = @queixas, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
           WHERE id = ${id};
           SELECT * FROM anamneses WHERE id = ${id};
           `);

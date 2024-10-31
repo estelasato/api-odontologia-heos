@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Req } from '@nestjs/common';
 import { HabitService } from './habit.service';
 import { BasicFormDto } from 'src/shared/dto/basicForm.dto';
 
@@ -7,8 +7,9 @@ export class HabitController {
   constructor(private readonly habitService: HabitService) {}
 
   @Post()
-  create(@Body() data: BasicFormDto) {
-    return this.habitService.create(data);
+  create(@Body() data: BasicFormDto, @Req() req) {
+    const { id, role } = req.usuario;
+    return this.habitService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -22,8 +23,9 @@ export class HabitController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() data: BasicFormDto) {
-    return this.habitService.update(id, data);
+  update(@Param('id') idHabit: number, @Body() data: BasicFormDto, @Req() req) {
+    const { id, role } = req.usuario;
+    return this.habitService.update(+idHabit, {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')

@@ -21,4 +21,7 @@ export class State {
   estado: string
   uf?: string
   ativo: number
+
+  idUser?: number
+  typeUser?: string
 }

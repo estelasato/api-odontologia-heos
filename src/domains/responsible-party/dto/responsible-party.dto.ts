@@ -57,4 +57,7 @@ export class Responsible extends AddressType{
   profissao?: string
   ativo: number
   idCidade?: number
+
+  idUser?: number
+  typeUser?: string
 }

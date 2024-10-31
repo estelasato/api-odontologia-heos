@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { createPaymentMethodDto, CreatePaymentMethodDto } from './dto/create-payment-method.dto';
-import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
+import { updatePaymentMethodDto, UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
 import * as sql from 'mssql';
 import { PaymentTermsService } from '../payment-terms/payment-terms.service';
 import { InstallmentsService } from '../installments/installments.service';
@@ -14,7 +14,7 @@ export class PaymentMethodsService {
   ) {}
 
   async create(data: createPaymentMethodDto) {
-    const { descricao,status } = data;
+    const { descricao, status, idUser, typeUser } = data;
     const date = new Date();
 
     try {
@@ -22,10 +22,12 @@ export class PaymentMethodsService {
       .input('descricao', sql.VarChar(50), descricao)
       .input('status', sql.Int, status)
       .input('dtCadastro', sql.DateTime, date)
+      .input('idUser', sql.Int, idUser)
+      .input('typeUser', sql.VarChar(10), typeUser)
       .input('dtUltAlt', sql.DateTime, date)
       .query`
-        INSERT INTO formaPagamento (descricao, status, dtCadastro, dtUltAlt)
-        VALUES (@descricao, @status, @dtCadastro, @dtUltAlt)
+        INSERT INTO formaPagamento (descricao, status, dtCadastro, dtUltAlt, idUser, typeUser)
+        VALUES (@descricao, @status, @dtCadastro, @dtUltAlt, @idUser, @typeUser);
       `;
 
       return { message: 'Forma de pagamento criada com sucesso!' };
@@ -57,8 +59,8 @@ export class PaymentMethodsService {
     }
   }
 
-  async update(id: number, data: UpdatePaymentMethodDto) {
-    const { status, descricao } = data;
+  async update(id: number, data: updatePaymentMethodDto) {
+    const { status, descricao, idUser, typeUser } = data;
 
     try {
       const date = new Date();
@@ -67,9 +69,11 @@ export class PaymentMethodsService {
         .input('descricao', sql.VarChar(50), descricao)
         .input('id', sql.Int, id)
         .input('status', sql.Int, status)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date).query`
         UPDATE formaPagamento 
-        SET descricao = @descricao, status = @status, dtUltAlt = @dtUltAlt
+        SET descricao = @descricao, status = @status, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
         WHERE id = @id;
       `;
 

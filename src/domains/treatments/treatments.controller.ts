@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put, Req } from '@nestjs/common';
 import { TreatmentsService } from './treatments.service';
 import { filterTreatmentDto, TreatmentDto } from './dto/treatment.dto';
 
@@ -7,8 +7,9 @@ export class TreatmentsController {
   constructor(private readonly treatmentsService: TreatmentsService) {}
 
   @Post()
-  create(@Body() createTreatmentDto: TreatmentDto) {
-    return this.treatmentsService.create(createTreatmentDto);
+  create(@Body() data: TreatmentDto, @Req() req: any) {
+    const {id, role} = req.usuario;
+    return this.treatmentsService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -22,8 +23,9 @@ export class TreatmentsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateTreatmentDto: TreatmentDto) {
-    return this.treatmentsService.update(id, updateTreatmentDto);
+  update(@Param('id') id: number, @Body() data: filterTreatmentDto, @Req() req: any) {
+    const {id: idUser, role} = req.usuario;
+    return this.treatmentsService.update(id, {...data, idUser, typeUser: role});
   }
 
   @Delete(':id')

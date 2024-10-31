@@ -74,7 +74,10 @@ export class createBudgetDto {
   idCondPagamento: number;
 
   tratamentos: budgetTreatmentDto[];
-  contasReceber: createAccReceivableDto[]
+  contasReceber: createAccReceivableDto[];
+
+  idUser?: number;
+  typeUser?: string;
 }
 
 export class BudgetFilterDto {

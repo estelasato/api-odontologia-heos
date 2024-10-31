@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put, Req } from '@nestjs/common';
 import { AnamnesisService } from './anamnesis.service';
 import { AnamnesisDto, AnamnesisFilterDto } from './dto/anamnesisDto';
 import { query } from 'express';
@@ -9,8 +9,9 @@ export class AnamnesisController {
   constructor(private readonly anamnesisService: AnamnesisService) {}
 
   @Post()
-  create(@Body() createAnamnesisDto: AnamnesisDto) {
-    return this.anamnesisService.create(createAnamnesisDto);
+  create(@Body() data: AnamnesisDto, @Req() req) {
+    const { id, role } = req.usuario
+    return this.anamnesisService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -24,8 +25,9 @@ export class AnamnesisController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateAnamnesisDto: AnamnesisDto) {
-    return this.anamnesisService.update(+id, updateAnamnesisDto);
+  update(@Param('id') idAnamnese: string, @Body() data: AnamnesisDto, @Req() req) {
+    const { id, role } = req.usuario
+    return this.anamnesisService.update(+idAnamnese, {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')

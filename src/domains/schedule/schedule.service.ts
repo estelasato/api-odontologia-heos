@@ -15,7 +15,7 @@ export class ScheduleService {
   ) {}
 
   async create(data: ScheduleTypes) {
-    const { idPaciente, idProfissional, horario, duracao, obs, status } = data;
+    const { idPaciente, idProfissional, horario, duracao, obs, status, idUser, typeUser } = data;
     const date = new Date();
     try {
       const r = await this.sqlCon
@@ -27,9 +27,11 @@ export class ScheduleService {
         .input('obs', sql.VarChar(100), obs)
         .input('status', sql.VarChar(20), status)
         .input('dtCadastro', date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query`
-        INSERT INTO agendas (idPaciente, idProfissional, horario, duracao, obs, status, dtCadastro, dtUltAlt)
-        VALUES (@idPaciente, @idProfissional, @horario, @duracao, @obs, @status, @dtCadastro, @dtUltAlt)
+        INSERT INTO agendas (idPaciente, idProfissional, horario, duracao, obs, status, dtCadastro, dtUltAlt, idUser, typeUser)
+        VALUES (@idPaciente, @idProfissional, @horario, @duracao, @obs, @status, @dtCadastro, @dtUltAlt, @idUser, @typeUser);
         SELECT * FROM funcionarios WHERE id = SCOPE_IDENTITY()
       `;
       return {
@@ -99,7 +101,7 @@ export class ScheduleService {
     horario: Date | string,
     data: ScheduleTypes,
   ) {
-    const { idPaciente, obs, status } = data;
+    const { idPaciente, obs, status, idUser, typeUser } = data;
     const date = new Date();
     // profissional e data n atualiza
     // se trocar o profissional, excluir a consulta e criar uma nova
@@ -112,9 +114,11 @@ export class ScheduleService {
         .input('idProfissional', sql.Int, profissional)
         .input('obs', sql.VarChar(100), obs)
         .input('status', sql.VarChar(20), status)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query`
         UPDATE agendas 
-        SET idPaciente = @idPaciente, obs = @obs, status = @status, dtUltAlt = @dtUltAlt
+        SET idPaciente = @idPaciente, obs = @obs, status = @status, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
         WHERE idProfissional = @idProfissional AND horario = ${horario};
         SELECT @@ROWCOUNT AS rowsAffected;
         `;

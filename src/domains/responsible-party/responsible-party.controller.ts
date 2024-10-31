@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Req } from '@nestjs/common';
 import { ResponsiblePartyService } from './responsible-party.service';
 import { ResponsibleDto } from './dto/responsible-party.dto';
 
@@ -7,8 +7,9 @@ export class ResponsiblePartyController {
   constructor(private readonly responsiblePartyService: ResponsiblePartyService) {}
 
   @Post()
-  create(@Body() createResponsiblePartyDto: ResponsibleDto) {
-    return this.responsiblePartyService.create(createResponsiblePartyDto);
+  create(@Body() data: ResponsibleDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.responsiblePartyService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -22,8 +23,9 @@ export class ResponsiblePartyController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateResponsiblePartyDto: ResponsibleDto) {
-    return this.responsiblePartyService.update(+id, updateResponsiblePartyDto);
+  update(@Param('id') idRP: number, @Body() data: ResponsibleDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.responsiblePartyService.update(+idRP, {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')

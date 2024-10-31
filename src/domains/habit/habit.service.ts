@@ -10,7 +10,7 @@ export class HabitService {
   ) {}
 
   async create(data: BasicFormDto): Promise<any> {
-    const { nome, descricao, ativo } = data;
+    const { nome, descricao, ativo, idUser, typeUser } = data;
 
     try {
       const now = new Date();
@@ -21,9 +21,11 @@ export class HabitService {
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', sql.DateTime, now)
         .input('dtUltAlt', sql.DateTime, now)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .query`
-          INSERT INTO habitos (nome, descricao, ativo, dtCadastro, dtUltAlt)
-          VALUES (@nome, @descricao, @ativo, @dtCadastro, @dtUltAlt)
+          INSERT INTO habitos (nome, descricao, ativo, dtCadastro, dtUltAlt, idUser, typeUser)
+          VALUES (@nome, @descricao, @ativo, @dtCadastro, @dtUltAlt, @idUser, @typeUser);
         `;
       return {
         message: 'Criado com sucesso!',
@@ -57,7 +59,7 @@ export class HabitService {
   }
 
   async update(id: number, data: BasicFormDto) {
-    const { nome, descricao, ativo } = data;
+    const { nome, descricao, ativo, idUser, typeUser } = data;
     
     try {
       const now = new Date();
@@ -68,9 +70,11 @@ export class HabitService {
         .input('descricao', sql.VarChar(100), descricao)
         .input('ativo', sql.Bit, ativo)
         .input('dtUltAlt', sql.DateTime, now)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .query`
         UPDATE habitos 
-        SET nome=@nome, descricao=@descricao, ativo=@ativo, dtUltAlt=@dtUltAlt 
+        SET nome=@nome, descricao=@descricao, ativo=@ativo, dtUltAlt=@dtUltAlt, idUser=@idUser, typeUser=@typeUser
         WHERE id=@id; SELECT @@ROWCOUNT AS ROWS;
       `;
 

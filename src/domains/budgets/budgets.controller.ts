@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Req } from '@nestjs/common';
 import { BudgetsService } from './budgets.service';
 import { BudgetFilterDto, CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
@@ -8,8 +8,9 @@ export class BudgetsController {
   constructor(private readonly budgetsService: BudgetsService) {}
 
   @Post()
-  create(@Body() createBudgetDto: CreateBudgetDto) {
-    return this.budgetsService.create(createBudgetDto);
+  create(@Body() data: CreateBudgetDto, @Req() req) {
+    const  {id, role} = req.usuario;
+    return this.budgetsService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -23,8 +24,9 @@ export class BudgetsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateBudgetDto: UpdateBudgetDto) {
-    return this.budgetsService.update(+id, updateBudgetDto);
+  update(@Param('id') idBudget: string, @Body() data: UpdateBudgetDto, @Req() req) {
+    const  {id, role} = req.usuario;
+    return this.budgetsService.update(+idBudget, {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')

@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { createPaymentTermDto } from './dto/create-payment-term.dto';
-import { UpdatePaymentTermDto } from './dto/update-payment-term.dto';
+import { updatePaymentTermDto, UpdatePaymentTermDto } from './dto/update-payment-term.dto';
 import * as sql from 'mssql';
 import { InstallmentsService } from '../installments/installments.service';
 
@@ -19,7 +19,7 @@ export class PaymentTermsService {
 
   async create(data: createPaymentTermDto) {
     const transaction = new sql.Transaction(this.sqlCon);
-    const { descricao, status, desconto, parcelas, juros, multa } = data;
+    const { descricao, status, desconto, parcelas, juros, multa, idUser, typeUser } = data;
     const date = new Date();
 
     try {
@@ -33,10 +33,12 @@ export class PaymentTermsService {
         .input('juros', sql.Float, juros)
         .input('multa', sql.Float, multa)
         .input('dtCadastro', sql.DateTime, date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date).query`
-        INSERT INTO condPagamento (descricao, status, desconto, dtCadastro, dtUltAlt, juros, multa)
+        INSERT INTO condPagamento (descricao, status, desconto, dtCadastro, dtUltAlt, juros, multa, idUser, typeUser)
         OUTPUT INSERTED.id
-        VALUES (@descricao, @status, @desconto, @dtCadastro, @dtUltAlt, @juros, @multa)
+        VALUES (@descricao, @status, @desconto, @dtCadastro, @dtUltAlt, @juros, @multa, @idUser, @typeUser)
       `;
       const condPagamentoId = result.recordset[0].id;
 
@@ -93,9 +95,9 @@ export class PaymentTermsService {
     }
   }
 
-  async update(id: number, data: UpdatePaymentTermDto) {
+  async update(id: number, data: updatePaymentTermDto) {
     const trans = new sql.Transaction(this.sqlCon);
-    const { status, descricao, desconto, parcelas } = data;
+    const { status, descricao, desconto, parcelas, idUser, typeUser } = data;
 
     try {
       await trans.begin();
@@ -107,9 +109,11 @@ export class PaymentTermsService {
         .input('id', sql.Int, id)
         .input('status', sql.Int, status)
         .input('desconto', sql.Float, desconto)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date).query`
         UPDATE condPagamento 
-        SET descricao = @descricao, status = @status, desconto = @desconto, dtUltAlt = @dtUltAlt
+        SET descricao = @descricao, status = @status, desconto = @desconto, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
         WHERE id = @id;
       `;
 

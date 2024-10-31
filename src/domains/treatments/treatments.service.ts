@@ -8,6 +8,7 @@ import {
   TreatmentDto,
   TreatmentFilter,
   TreatmentTypes,
+  UpdateTreatmentDto,
 } from './dto/treatment.dto';
 import * as sql from 'mssql';
 
@@ -26,6 +27,8 @@ export class TreatmentsService {
       idPaciente,
       idProfissional,
       idAnamnese,
+      idUser,
+      typeUser,
     } = data;
     const date = new Date();
     try {
@@ -39,9 +42,11 @@ export class TreatmentsService {
         .input('idProfissional', sql.Int, idProfissional)
         .input('idAnamnese', sql.Int, idAnamnese)
         .input('dtCadastro', date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query(`
-        INSERT INTO tratamentos (dataInicio, dataFim, dente, descricao, idPaciente, idProfissional, dtCadastro, dtUltAlt, idAnamnese)
-        VALUES (@dataInicio, @dataFim, @dente, @descricao, @idPaciente, @idProfissional, @dtCadastro, @dtUltAlt, @idAnamnese);  
+        INSERT INTO tratamentos (dataInicio, dataFim, dente, descricao, idPaciente, idProfissional, dtCadastro, dtUltAlt, idAnamnese, idUser, typeUser)
+        VALUES (@dataInicio, @dataFim, @dente, @descricao, @idPaciente, @idProfissional, @dtCadastro, @dtUltAlt, @idAnamnese, @idUser, @typeUser);  
         SELECT * FROM tratamentos WHERE id = SCOPE_IDENTITY()
       `);
 
@@ -112,7 +117,7 @@ export class TreatmentsService {
     }
   }
 
-  async update(id: number, data: TreatmentDto) {
+  async update(id: number, data: UpdateTreatmentDto): Promise<any> {
     const {
       idPaciente,
       idProfissional,
@@ -121,6 +126,8 @@ export class TreatmentsService {
       dente,
       descricao,
       idAnamnese,
+      idUser,
+      typeUser,
     } = data;
     const date = new Date();
 
@@ -135,10 +142,12 @@ export class TreatmentsService {
         .input('dente', sql.VarChar, dente)
         .input('descricao', sql.VarChar, descricao)
         .input('dtUltALt', sql.DateTime, date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('id', sql.Int, id)
         .query(
           `UPDATE tratamentos
-        SET idAnamnese = @idAnamnese, idPaciente = @idPaciente, idProfissional = @idProfissional, dataFim = @dataFim, dataInicio = @dataInicio, dente = @dente, descricao = @descricao, dtUltAlt = @dtUltAlt
+        SET idAnamnese = @idAnamnese, idPaciente = @idPaciente, idProfissional = @idProfissional, dataFim = @dataFim, dataInicio = @dataInicio, dente = @dente, descricao = @descricao, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
         WHERE id = @id;
         SELECT @@ROWCOUNT AS rowsAffected;
         `,

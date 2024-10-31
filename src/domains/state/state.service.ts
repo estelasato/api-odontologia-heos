@@ -10,7 +10,7 @@ export class StateService {
   ) {}
 
   async create(createStateDto: State) {
-    const { idPais, estado, uf, ativo } = createStateDto;
+    const { idPais, estado, uf, ativo, idUser, typeUser } = createStateDto;
     const date = new Date();
 
     try {
@@ -21,9 +21,11 @@ export class StateService {
         .input('uf', sql.VarChar(2), uf)
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query`
-        INSERT INTO estados (idPais, estado, uf, ativo, dtCadastro, dtUltAlt)
-        VALUES (@idPais, @estado, @uf, @ativo, @dtCadastro, @dtUltAlt)
+        INSERT INTO estados (idPais, estado, uf, ativo, dtCadastro, dtUltAlt, idUser, typeUser)
+        VALUES (@idPais, @estado, @uf, @ativo, @dtCadastro, @dtUltAlt, @idUser, @typeUser)
       `;
       return {
         message: 'Estado criado com sucesso!',
@@ -86,7 +88,7 @@ export class StateService {
   }
 
   async update(id: number, updateStateDto: State) {
-    const { idPais, estado, uf, ativo } = updateStateDto;
+    const { idPais, estado, uf, ativo, idUser, typeUser } = updateStateDto;
     const date = new Date();
 
     try {
@@ -96,9 +98,11 @@ export class StateService {
         .input('estado', sql.VarChar(56), estado)
         .input('uf', sql.VarChar(2), uf)
         .input('ativo', sql.Bit, ativo)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query(`
         UPDATE estados
-        SET idPais = @idPais, estado = @estado, uf = @uf, ativo = @ativo, dtUltAlt = @dtUltAlt
+        SET idPais = @idPais, estado = @estado, uf = @uf, ativo = @ativo, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
         WHERE id = ${id}; SELECT @@ROWCOUNT AS rowsAffected;
       `);
 

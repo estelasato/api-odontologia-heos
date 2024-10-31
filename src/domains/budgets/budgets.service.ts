@@ -50,10 +50,12 @@ export class BudgetsService {
         .input('sumTotal', sql.Decimal, total)
         .input('status', sql.VarChar(20), status)
         .input('dtCadastro', sql.DateTime, date)
+        .input('idUser', sql.Int, data?.idUser)
+        .input('typeUser', sql.VarChar(10), data?.typeUser)
         .input('dtUltAlt', sql.DateTime, date).query(`
-          INSERT INTO orcamentos (idAnamnese, idPaciente, idProfissional, idCondPagamento, total, status, dtCadastro, dtUltAlt)
+          INSERT INTO orcamentos (idUser, typeUser, idAnamnese, idPaciente, idProfissional, idCondPagamento, total, status, dtCadastro, dtUltAlt)
           OUTPUT INSERTED.*
-          VALUES (@idAnamnese, @idPaciente, @idProfissional, @idCondPagamento, @sumTotal, @status, @dtCadastro, @dtUltAlt);
+          VALUES (@idUser, @typeUser, @idAnamnese, @idPaciente, @idProfissional, @idCondPagamento, @sumTotal, @status, @dtCadastro, @dtUltAlt);
         `);
 
       if (!result.recordset || result.recordset.length === 0) {
@@ -156,6 +158,8 @@ export class BudgetsService {
       total,
       tratamentos,
       contasReceber,
+      idUser,
+      typeUser,
     } = data;
     const trans = new sql.Transaction(this.sqlCon);
     await trans.begin();
@@ -174,9 +178,11 @@ export class BudgetsService {
         .input('sumTotal', sql.Decimal, total)
         .input('status', sql.VarChar(20), status)
         .input('dtUltAlt', sql.DateTime, date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('id', sql.Int, id).query(`
           UPDATE orcamentos 
-          SET idAnamnese = @idAnamnese, idPaciente = @idPaciente, idProfissional = @idProfissional, idCondPagamento = @idCondPagamento, total = @sumTotal, status = @status, dtUltAlt = @dtUltAlt
+          SET idUser=@idUser, typeUser=@typeUser, idAnamnese = @idAnamnese, idPaciente = @idPaciente, idProfissional = @idProfissional, idCondPagamento = @idCondPagamento, total = @sumTotal, status = @status, dtUltAlt = @dtUltAlt
           WHERE id = @id;
         `);
 

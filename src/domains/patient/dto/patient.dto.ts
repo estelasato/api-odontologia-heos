@@ -77,4 +77,7 @@ export class Patient extends AddressType{
   responsaveis?: IncludeIds[]
   habitos?: IncludeIds[]
 
+  idUser?: number;
+  typeUser?: string;
+
 }

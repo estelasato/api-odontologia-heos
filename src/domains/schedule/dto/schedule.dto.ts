@@ -97,4 +97,7 @@ export class ScheduleTypes {
   duracao?: number;
   obs?: string;
   status: StatusType;
+
+  idUser?: number;
+  typeUser?: string
 }

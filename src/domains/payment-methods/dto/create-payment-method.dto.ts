@@ -17,4 +17,7 @@ export class createPaymentMethodDto {
   id?: number;
   status: number;
   descricao?: string;
+
+  idUser?: number;
+  typeUser?: number;
 }

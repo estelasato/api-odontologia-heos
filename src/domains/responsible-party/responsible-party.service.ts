@@ -13,7 +13,7 @@ export class ResponsiblePartyService {
 
   async create(data: Responsible) {
     const { nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil,
-      cep, bairro, complemento, idCidade, logradouro, numero, profissao, ativo } = data;
+      cep, bairro, complemento, idCidade, logradouro, numero, profissao, ativo, idUser, typeUser } = data;
 
     try {
       const date = new Date();
@@ -35,6 +35,8 @@ export class ResponsiblePartyService {
       .input('idCidade', sql.Int, idCidade)
       .input('ativo', sql.Bit, ativo)
       .input('dtCadastro', sql.DateTime, date)
+      .input('idUser', sql.Int, idUser)
+      .input('typeUser', sql.VarChar(10), typeUser)
       .input('dtUltAlt', sql.DateTime, date).query`
         INSERT INTO responsaveis (nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, profissao, cep, logradouro, bairro, numero, complemento, idCidade, ativo, dtCadastro, dtUltAlt)
         VALUES (@nome, @cpf, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @profissao, @cep, @logradouro, @bairro, @numero, @complemento, @idCidade, @ativo, @dtCadastro, @dtUltAlt)
@@ -74,7 +76,7 @@ export class ResponsiblePartyService {
 
   async update(id: number, data: Responsible) {
     const { nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, 
-      cep, bairro, complemento, idCidade, logradouro, numero, profissao, ativo } = data;
+      cep, bairro, complemento, idCidade, logradouro, numero, profissao, ativo, idUser, typeUser } = data;
 
     try {
       const date = new Date();
@@ -96,11 +98,13 @@ export class ResponsiblePartyService {
       .input('idCidade', sql.Int, idCidade)
       .input('ativo', sql.Bit, ativo)
       .input('dtCadastro', sql.DateTime, date)
+      .input('idUser', sql.Int, idUser)
+      .input('typeUser', sql.VarChar(10), typeUser)
       .input('dtUltAlt', sql.DateTime, date).query`
         UPDATE responsaveis
         SET nome = @nome, cpf = @cpf, rg = @rg, dtNascimento = @dtNascimento, email = @email, celular = @celular, sexo = @sexo, 
         estCivil = @estCivil, profissao = @profissao, cep = @cep, logradouro = @logradouro, bairro = @bairro, numero = @numero, 
-        complemento = @complemento, idCidade = @idCidade, ativo = @ativo, dtCadastro = @dtCadastro, dtUltAlt = @dtUltAlt
+        complemento = @complemento, idCidade = @idCidade, ativo = @ativo, dtCadastro = @dtCadastro, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
         WHERE id = ${id};SELECT @@ROWCOUNT AS rowsAffected;
       `;
 

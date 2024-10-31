@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Req } from '@nestjs/common';
 import { PaymentTermsService } from './payment-terms.service';
 import { CreatePaymentTermDto } from './dto/create-payment-term.dto';
 import { UpdatePaymentTermDto } from './dto/update-payment-term.dto';
@@ -8,8 +8,9 @@ export class PaymentTermsController {
   constructor(private readonly paymentTermsService: PaymentTermsService) {}
 
   @Post()
-  create(@Body() data: CreatePaymentTermDto) {
-    return this.paymentTermsService.create(data);
+  create(@Body() data: CreatePaymentTermDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.paymentTermsService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -23,8 +24,9 @@ export class PaymentTermsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updatePaymentTermDto: UpdatePaymentTermDto) {
-    return this.paymentTermsService.update(Number(id), updatePaymentTermDto);
+  update(@Param('id') idPT: number, @Body() data: UpdatePaymentTermDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.paymentTermsService.update(Number(idPT), {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')

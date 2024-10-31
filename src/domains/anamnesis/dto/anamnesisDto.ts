@@ -131,6 +131,9 @@ export class AnamnesisTypes {
   alergias?: allergyAnamnesisDto[];
   doencas?: IllnessAnamnesisDto[];
   medicamentos?: medAnamnesisDto[];
+
+  idUser?: number;
+  typeUser?: string
 }
 
 export class AnamnesisFilter {

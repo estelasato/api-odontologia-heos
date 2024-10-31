@@ -52,4 +52,7 @@ export class createPaymentTermDto {
   multa?: number;
   status: number;
   parcelas: InstallmentsDto[];
+
+  idUser?: number;
+  typeUser?: string
 }

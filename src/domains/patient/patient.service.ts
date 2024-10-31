@@ -36,6 +36,8 @@ export class PatientService {
       ativo,
       responsaveis,
       habitos,
+      idUser,
+      typeUser,
     } = createPatientDto;
 
     const transaction = new sql.Transaction(this.sqlConnection);
@@ -63,12 +65,14 @@ export class PatientService {
         .input('idCidade', sql.Int, idCidade)
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', sql.DateTime, date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date).query`
         INSERT INTO pacientes (nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, profissao, indicacao, 
-        cep, logradouro, bairro, numero, complemento, ativo, dtCadastro, dtUltAlt)
+        cep, logradouro, bairro, numero, complemento, ativo, dtCadastro, dtUltAlt, idUser, typeUser)
         OUTPUT INSERTED.*
         VALUES (@nome, @cpf, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @profissao, @indicacao,
-        @cep, @logradouro, @bairro, @numero, @complemento, @ativo, @dtCadastro, @dtUltAlt);
+        @cep, @logradouro, @bairro, @numero, @complemento, @ativo, @dtCadastro, @dtUltAlt, @idUser, @typeUser);
       `;
       const idPac = result.recordset[0];
 
@@ -189,6 +193,8 @@ export class PatientService {
       ativo,
       responsaveis,
       habitos,
+      idUser,
+      typeUser,
     } = updatePatientDto;
     const transaction = new sql.Transaction(this.sqlConnection);
     try {
@@ -213,9 +219,11 @@ export class PatientService {
         .input('complemento', sql.VarChar(100), complemento)
         .input('idCidade', sql.Int, idCidade)
         .input('ativo', sql.Bit, ativo)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date).query`
         UPDATE pacientes
-        SET nome = @nome, cpf = @cpf, rg = @rg, dtNascimento = @dtNascimento, email = @email, celular = @celular, 
+        SET idUser = @idUser, typeUser = @typeUser, nome = @nome, cpf = @cpf, rg = @rg, dtNascimento = @dtNascimento, email = @email, celular = @celular, 
         sexo = @sexo, estCivil = @estCivil, profissao = @profissao, indicacao = @indicacao, cep = @cep, 
         logradouro = @logradouro, bairro = @bairro, numero = @numero, complemento = @complemento, idCidade = @idCidade, 
         ativo = @ativo, dtUltAlt = @dtUltAlt

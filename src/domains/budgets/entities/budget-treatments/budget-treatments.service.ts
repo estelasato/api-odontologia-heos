@@ -7,6 +7,9 @@ export class BudgetTreatmentsType {
   idTratamento: number;
   obs?: string;
   total?: number;
+
+  idUser?: number;
+  typeUser?: string;
 }
 
 @Injectable()

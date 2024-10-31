@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Req } from '@nestjs/common';
 import { MedicationService } from './medication.service';
 import { BasicFormDto } from 'src/shared/dto/basicForm.dto';
 
@@ -7,8 +7,9 @@ export class MedicationController {
   constructor(private readonly medicationService: MedicationService) {}
 
   @Post()
-  create(@Body() data: BasicFormDto) {
-    return this.medicationService.create(data);
+  create(@Body() data: BasicFormDto, @Req() req) {
+    const { id, role } = req.usuario
+    return this.medicationService.create({ ...data, idUser: id, typeUser: role });
   }
 
   @Get()
@@ -22,8 +23,9 @@ export class MedicationController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() data: BasicFormDto) {
-    return this.medicationService.update(id, data);
+  update(@Param('id') idMed: number, @Body() data: BasicFormDto, @Req() req) {
+    const { id, role } = req.usuario
+    return this.medicationService.update(+idMed, {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')

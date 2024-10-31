@@ -62,6 +62,22 @@ export class TreatmentTypes {
   idPaciente: number;
   idProfissional: number;
   idAnamnese: number;
+
+  idUser?: number;
+  typeUser?: string;
+}
+
+export class UpdateTreatmentDto {
+  descricao?: string;
+  dataInicio?: Date;
+  dataFim?: Date;
+  dente?:string;
+  idPaciente?: number;
+  idProfissional?: number;
+  idAnamnese?: number;
+
+  idUser?: number;
+  typeUser?: string;
 }
 
 export class TreatmentFilter {
