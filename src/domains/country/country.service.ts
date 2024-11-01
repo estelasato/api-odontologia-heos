@@ -9,8 +9,8 @@ export class CountryService {
     private readonly sqlConnection: sql.ConnectionPool,
   ) {}
 
-  async create(createCountryDto: CountryDto) {
-    const { pais, ddi, sigla, ativo } = createCountryDto;
+  async create(createCountryDto: Country) {
+    const { pais, ddi, sigla, ativo, idUser, typeUser } = createCountryDto;
     const now = new Date();
 
     try {
@@ -21,9 +21,11 @@ export class CountryService {
         .input('sigla', sql.VarChar(3), sigla)
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', sql.DateTime, now)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, now).query`
-        INSERT INTO paises (pais, ddi, sigla, ativo, dtCadastro, dtUltAlt)
-        VALUES (@pais, @ddi, @sigla, @ativo, @dtCadastro, @dtUltAlt)
+        INSERT INTO paises (pais, ddi, sigla, ativo, dtCadastro, dtUltAlt, idUser, typeUser)
+        VALUES (@pais, @ddi, @sigla, @ativo, @dtCadastro, @dtUltAlt, @idUser, @typeUser)
       `;
       return {
         message: 'Criado com sucesso!',
@@ -58,7 +60,7 @@ export class CountryService {
   }
 
   async update(id: number, updateCountryDto: Country) {
-    const { pais, ddi, sigla, ativo } = updateCountryDto;
+    const { pais, ddi, sigla, ativo, idUser, typeUser } = updateCountryDto;
     const now = new Date(); // Data de última alteração
 
     try {
@@ -69,10 +71,12 @@ export class CountryService {
         .input('ddi', sql.VarChar(3), ddi)
         .input('sigla', sql.VarChar(3), sigla)
         .input('ativo', sql.BIT, ativo)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, now) // Data da última alteração
         .query(
           `UPDATE paises 
-           SET pais = @pais, ddi = @ddi, sigla = @sigla, ativo = @ativo, dtUltAlt = @dtUltAlt 
+           SET pais = @pais, ddi = @ddi, sigla = @sigla, ativo = @ativo, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
            WHERE id = @id; SELECT @@ROWCOUNT AS rowsAffected`, // Verificar se a atualização foi bem-sucedida
         );
 

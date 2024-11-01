@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Req } from '@nestjs/common';
 import { CountryService } from './country.service';
 import { CountryDto } from './dto/country.dto';
 
@@ -7,8 +7,9 @@ export class CountryController {
   constructor(private readonly countryService: CountryService) {}
 
   @Post()
-  createCountry(@Body() createCountryDto: CountryDto) {
-    return this.countryService.create(createCountryDto);
+  createCountry(@Body() data: CountryDto, @Req() req) {
+    const {id, role} = req.usuario;
+    return this.countryService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -23,8 +24,9 @@ export class CountryController {
   }
 
   @Put(':id')
-  updateCountry(@Param('id') id: number, @Body() updateCountryDto: CountryDto) {
-    return this.countryService.update(+id, updateCountryDto);
+  updateCountry(@Param('id') id: number, @Body() updateCountryDto: CountryDto, @Req() req) {
+    const {id: idUser, role} = req.usuario;
+    return this.countryService.update(+id, {...updateCountryDto, idUser, typeUser: role});
   }
 
   @Delete(':id')

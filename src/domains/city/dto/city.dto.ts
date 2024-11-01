@@ -19,4 +19,7 @@ export class City {
   cidade: string
   ddd?: string
   ativo: number
+
+  idUser?: number
+  typeUser?: string
 }

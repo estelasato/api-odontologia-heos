@@ -31,6 +31,8 @@ export class AccReceivableService {
       obs,
       situacao,
       valorRecebido,
+      idUser,
+      typeUser,
     } = data;
     const date = new Date();
     try {
@@ -52,13 +54,14 @@ export class AccReceivableService {
         .input('dtRecebimento', sql.DateTime, dtRecebimento)
         .input('dtCancelamento', sql.DateTime, dtCancelamento)
         .input('dtCadastro', sql.DateTime, date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date)
         .query(`
-          INSERT INTO contasReceber (idPaciente, idOrcamento, idFormaPag, idProfissional, obs, parcela, desconto, multa, juros, valorParcela, valorRecebido, situacao, dtVencimento, dtRecebimento, dtCancelamento, dtCadastro, dtUltAlt)
+          INSERT INTO contasReceber (idPaciente, idOrcamento, idFormaPag, idProfissional, obs, parcela, desconto, multa, juros, valorParcela, valorRecebido, situacao, dtVencimento, dtRecebimento, dtCancelamento, dtCadastro, dtUltAlt, idUser, typeUser)
           OUTPUT INSERTED.*
-          VALUES (@idPaciente, @idOrcamento, @idFormaPag, @idProfissional, @obs, @parcela, @desconto, @multa, @juros, @valorParcela, @valorRecebido, @situacao, @dtVencimento, @dtRecebimento, @dtCancelamento, @dtCadastro, @dtUltAlt)
+          VALUES (@idPaciente, @idOrcamento, @idFormaPag, @idProfissional, @obs, @parcela, @desconto, @multa, @juros, @valorParcela, @valorRecebido, @situacao, @dtVencimento, @dtRecebimento, @dtCancelamento, @dtCadastro, @dtUltAlt, @idUser, @typeUser)
         `);
-      console.log(result.recordset, 'a')
     } catch (e) {
       throw new Error(`Ocorreu um erro: ${e.message}`);
     }
@@ -136,6 +139,8 @@ export class AccReceivableService {
       obs,
       situacao,
       valorRecebido,
+      idUser,
+      typeUser,
     } = data;
     const date = new Date();
     try {
@@ -157,9 +162,11 @@ export class AccReceivableService {
         .input('dtRecebimento', sql.DateTime, dtRecebimento)
         .input('dtCancelamento', sql.DateTime, dtCancelamento)
         .input('id', sql.Int, id)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query(`
         UPDATE contasReceber
-        SET idPaciente = @idPaciente, idOrcamento = @idOrcamento, idFormaPag = @idFormaPag, idProfissional = @idProfissional, obs = @obs, parcela = @parcela, desconto = @desconto, multa = @multa, juros = @juros, valorParcela = @valorParcela, valorRecebido = @valorRecebido, situacao = @situacao, dtVencimento = @dtVencimento, dtRecebimento = @dtRecebimento, dtCancelamento = @dtCancelamento, dtUltAlt = @dtUltAlt
+        SET idPaciente = @idPaciente, idOrcamento = @idOrcamento, idFormaPag = @idFormaPag, idProfissional = @idProfissional, obs = @obs, parcela = @parcela, desconto = @desconto, multa = @multa, juros = @juros, valorParcela = @valorParcela, valorRecebido = @valorRecebido, situacao = @situacao, dtVencimento = @dtVencimento, dtRecebimento = @dtRecebimento, dtCancelamento = @dtCancelamento, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
         WHERE id = @id
       `);
 

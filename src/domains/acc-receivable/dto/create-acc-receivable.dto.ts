@@ -81,6 +81,9 @@ export class createAccReceivableDto {
   dtVencimento: Date;
   dtRecebimento?: Date;
   dtCancelamento?: Date;
+
+  idUser?: number;
+  typeUser?: string;
 }
 
 export class FilterAccReceivableDto {

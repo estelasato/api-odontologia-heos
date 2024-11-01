@@ -26,4 +26,7 @@ export class Country {
   ddi?: string
   sigla?: string
   ativo: number
+
+  idUser?: number
+  typeUser?: string
 }

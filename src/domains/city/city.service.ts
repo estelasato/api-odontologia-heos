@@ -10,7 +10,7 @@ export class CityService {
   ) {}
 
   async create(createCityDto: City) {
-    const { idEstado, cidade, ddd, ativo } = createCityDto;
+    const { idEstado, cidade, ddd, ativo, idUser, typeUser } = createCityDto;
     const date = new Date();
 
     try {
@@ -21,9 +21,11 @@ export class CityService {
         .input('ddd', sql.VarChar(2), ddd)
         .input('ativo', sql.Bit, ativo)
         .input('dtCadastro', date)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query`
-        INSERT INTO cidades (idEstado, cidade, ddd, ativo, dtCadastro, dtUltAlt)
-        VALUES (@idEstado, @cidade, @ddd, @ativo, @dtCadastro, @dtUltAlt)
+        INSERT INTO cidades (idEstado, cidade, ddd, ativo, dtCadastro, dtUltAlt, idUser, typeUser)
+        VALUES (@idEstado, @cidade, @ddd, @ativo, @dtCadastro, @dtUltAlt, @idUser, @typeUser)
       `;
 
       return {
@@ -96,7 +98,7 @@ export class CityService {
 
 
   async update(id: number, updateCityDto: City) {
-    const { idEstado, cidade, ddd, ativo } = updateCityDto;
+    const { idEstado, cidade, ddd, ativo, idUser, typeUser } = updateCityDto;
     const date = new Date();
 
     try {
@@ -106,9 +108,11 @@ export class CityService {
         .input('cidade', sql.VarChar(56), cidade)
         .input('ddd', sql.VarChar(2), ddd)
         .input('ativo', sql.Bit, ativo)
+        .input('idUser', sql.Int, idUser)
+        .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query`
         UPDATE cidades
-        SET idEstado = @idEstado, cidade = @cidade, ddd = @ddd, ativo = @ativo, dtUltAlt = @dtUltAlt
+        SET idEstado = @idEstado, cidade = @cidade, ddd = @ddd, ativo = @ativo, dtUltAlt = @dtUltAlt, idUser = @idUser, typeUser = @typeUser
         WHERE id = ${id}; SELECT @@ROWCOUNT AS rowsAffected;
       `;
 

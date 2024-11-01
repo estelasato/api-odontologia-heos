@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put, Req } from '@nestjs/common';
 import { AccReceivableService } from './acc-receivable.service';
 import { CreateAccReceivableDto, FilterAccReceivableDto } from './dto/create-acc-receivable.dto';
 import { UpdateAccReceivableDto } from './dto/update-acc-receivable.dto';
@@ -9,8 +9,9 @@ export class AccReceivableController {
   constructor(private readonly accReceivableService: AccReceivableService) {}
 
   @Post()
-  create(@Body() createAccReceivableDto: CreateAccReceivableDto) {
-    return this.accReceivableService.create(createAccReceivableDto);
+  create(@Body() data: CreateAccReceivableDto, @Req() req: any) {
+    const {id, role} = req.usuario;
+    return this.accReceivableService.create({...data, idUser: id, typeUser: role});
   }
 
   @Get()
@@ -24,8 +25,9 @@ export class AccReceivableController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateAccReceivableDto: UpdateAccReceivableDto) {
-    return this.accReceivableService.update(+id, updateAccReceivableDto);
+  update(@Param('id') idAcc: string, @Body() data: UpdateAccReceivableDto, @Req() req: any) {
+    const {id, role} = req.usuario;
+    return this.accReceivableService.update(+idAcc, {...data, idUser: id, typeUser: role});
   }
 
   @Delete(':id')
