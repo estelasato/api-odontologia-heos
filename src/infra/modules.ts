@@ -13,6 +13,7 @@ import { MedicationsModule } from "src/domains/medications/medications.module";
 import { PatientModule } from "src/domains/patient/patient.module";
 import { PaymentMethodsModule } from "src/domains/payment-methods/payment-methods.module";
 import { PaymentTermsModule } from "src/domains/payment-terms/payment-terms.module";
+import { ProceduresModule } from "src/domains/procedures/procedures.module";
 import { ProfessionalModule } from "src/domains/professional/professional.module";
 import { ResponsiblePartyModule } from "src/domains/responsible-party/responsible-party.module";
 import { ScheduleModule } from "src/domains/schedule/schedule.module";
@@ -44,4 +45,5 @@ export const modules = [
   TreatmentsModule,
   TokenModule,
   UsuariosModule,
+  ProceduresModule,
 ]
