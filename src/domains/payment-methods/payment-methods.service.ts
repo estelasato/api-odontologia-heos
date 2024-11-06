@@ -20,7 +20,7 @@ export class PaymentMethodsService {
     try {
       await this.sqlCon.request()
       .input('descricao', sql.VarChar(50), descricao)
-      .input('status', sql.Int, status)
+      .input('status', sql.Int, 1)
       .input('dtCadastro', sql.DateTime, date)
       .input('idUser', sql.Int, idUser)
       .input('typeUser', sql.VarChar(10), typeUser)
@@ -68,7 +68,7 @@ export class PaymentMethodsService {
         .request()
         .input('descricao', sql.VarChar(50), descricao)
         .input('id', sql.Int, id)
-        .input('status', sql.Int, status)
+        .input('status', sql.Bit, status)
         .input('idUser', sql.Int, idUser)
         .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date).query`

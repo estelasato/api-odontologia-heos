@@ -8,6 +8,7 @@ import { CreateEmployee } from './dto/create-employee.dto';
 import { UpdateEmployee } from './dto/update-employee.dto';
 import * as sql from 'mssql';
 import { CityService } from '../city/city.service';
+import { UsuariosService } from '../usuarios/usuarios.service';
 
 @Injectable()
 export class EmployeeService {
@@ -15,6 +16,7 @@ export class EmployeeService {
     @Inject('SQL_CONNECTION')
     private readonly sqlConnection: sql.ConnectionPool,
     private readonly cityService: CityService,
+    private readonly usuarioService: UsuariosService,
   ) {}
 
   async create(data: CreateEmployee) {
@@ -39,6 +41,7 @@ export class EmployeeService {
       idCidade,
       logradouro,
       numero,
+      senha
     } = data;
     const date = new Date();
 
@@ -69,7 +72,7 @@ export class EmployeeService {
         .input('celular', sql.VarChar(11), celular)
         .input('sexo', sql.VarChar(1), sexo)
         .input('estCivil', sql.VarChar(1), estCivil)
-        .input('ativo', sql.Bit, ativo)
+        .input('ativo', sql.Bit, 1)
         .input('cargo', sql.VarChar(50), cargo)
         .input('salario', sql.Decimal(18, 2), salario)
         .input('pis', sql.VarChar(11), pis)
@@ -88,6 +91,16 @@ export class EmployeeService {
           SELECT * FROM funcionarios WHERE id = SCOPE_IDENTITY()
           `;
       const insertedRecord = result.recordset[0];
+
+      if (insertedRecord && senha && email) {
+        await this.usuarioService.create({
+          role: 'funcionario',
+          email,
+          senha,
+          ativo: ativo,
+          nome,
+        });
+      } 
 
       return { message: 'Funcionário criado com sucesso!', insertedRecord };
     } catch (err) {
@@ -157,11 +170,30 @@ export class EmployeeService {
       numero,
       bairro,
       logradouro,
+      senha
     } = data;
     const date = new Date();
 
     try {
-      const updateResult = await this.sqlConnection
+
+      const func = await this.findOne(id);
+      if (func.error || !func) {
+        throw new NotFoundException('Funcionário não encontrado para atualização');
+      }
+
+      // se alterou o email ou nome altera o login tbm
+      if (func.email !== email || func.nome !== nome) {
+        try {
+          if (senha && email) {
+            await this.usuarioService.changePwd({email: func.email, senhaNova: senha});
+          }
+          await this.usuarioService.update({nome, email});
+        } catch (e) {
+          throw new BadRequestException(`Ocorreu um errro ao atualizar usuario: ${e.message}`);
+        }
+      }
+
+      await this.sqlConnection
         .request()
         .input('nome', sql.VarChar(50), nome)
         .input('cpf', sql.VarChar(11), cpf)
@@ -188,13 +220,6 @@ export class EmployeeService {
           set nome = @nome, cpf = @cpf, rg = @rg, dtNascimento = @dtNascimento, email = @email, celular = @celular, sexo = @sexo, estCivil = @estCivil, ativo = @ativo, cargo = @cargo, salario = @salario, pis = @pis, dtAdmissao = @dtAdmissao, dtDemissao = @dtDemissao, idCidade = @idCidade, cep = @cep, logradouro = @logradouro, bairro = @bairro, numero = @numero, complemento = @complemento, dtUltAlt = @dtUltAlt
           where id = ${id}; select @@ROWCOUNT AS rowsAffected;
           `);
-
-      if (updateResult.recordset[0].rowsAffected === 0) {
-        throw new NotFoundException(
-          'Funcionário não encontrado para atualização',
-        );
-      }
-
       return {
         message: 'Funcionário atualizado com sucesso!',
       };

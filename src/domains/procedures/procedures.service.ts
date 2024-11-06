@@ -27,7 +27,7 @@ export class ProceduresService {
         .input('nome', sql.VarChar(20), nome)
         .input('descricao', sql.VarChar(100), descricao)
         .input('valor', sql.Decimal, valor)
-        .input('ativo', sql.Int, ativo)
+        .input('ativo', sql.Bit, 1)
         .input('idUser', sql.Int, idUser)
         .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtCadastro', date)
@@ -90,7 +90,6 @@ export class ProceduresService {
         } else {
           return { error: 'Nenhum registro atualizado' };
         }
-
     } catch (e) {
       throw new Error(e);
     }

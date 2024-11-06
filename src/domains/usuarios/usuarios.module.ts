@@ -9,5 +9,6 @@ import { DatabaseModule } from 'src/db.module';
   controllers: [UsuariosController],
   providers: [UsuariosService],
   imports: [DatabaseModule, CryptographyModule, TokenModule],
+  exports	: [UsuariosService]
 })
 export class UsuariosModule {}

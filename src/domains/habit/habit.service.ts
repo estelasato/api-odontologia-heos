@@ -18,7 +18,7 @@ export class HabitService {
         .request()
         .input('nome', sql.VarChar, nome)
         .input('descricao', sql.VarChar, descricao)
-        .input('ativo', sql.Bit, ativo)
+        .input('ativo', sql.Bit, 1)
         .input('dtCadastro', sql.DateTime, now)
         .input('dtUltAlt', sql.DateTime, now)
         .input('idUser', sql.Int, idUser)

@@ -63,7 +63,7 @@ export class PatientService {
         .input('numero', sql.Int, numero)
         .input('complemento', sql.VarChar(100), complemento)
         .input('idCidade', sql.Int, idCidade)
-        .input('ativo', sql.Bit, ativo)
+        .input('ativo', sql.Bit, 1)
         .input('dtCadastro', sql.DateTime, date)
         .input('idUser', sql.Int, idUser)
         .input('typeUser', sql.VarChar(10), typeUser)

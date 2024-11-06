@@ -29,6 +29,7 @@ export class TreatmentsService {
       idAnamnese,
       idUser,
       typeUser,
+      idProcedimento,
     } = data;
     const date = new Date();
     try {
@@ -41,12 +42,13 @@ export class TreatmentsService {
         .input('idPaciente', sql.Int, idPaciente)
         .input('idProfissional', sql.Int, idProfissional)
         .input('idAnamnese', sql.Int, idAnamnese)
+        .input('idProcedimento', sql.Int, idProcedimento)
         .input('dtCadastro', date)
         .input('idUser', sql.Int, idUser)
         .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', date).query(`
-        INSERT INTO tratamentos (dataInicio, dataFim, dente, descricao, idPaciente, idProfissional, dtCadastro, dtUltAlt, idAnamnese, idUser, typeUser)
-        VALUES (@dataInicio, @dataFim, @dente, @descricao, @idPaciente, @idProfissional, @dtCadastro, @dtUltAlt, @idAnamnese, @idUser, @typeUser);  
+        INSERT INTO tratamentos (idProcedimento, dataInicio, dataFim, dente, descricao, idPaciente, idProfissional, dtCadastro, dtUltAlt, idAnamnese, idUser, typeUser)
+        VALUES (@idProcedimento, @dataInicio, @dataFim, @dente, @descricao, @idPaciente, @idProfissional, @dtCadastro, @dtUltAlt, @idAnamnese, @idUser, @typeUser);  
         SELECT * FROM tratamentos WHERE id = SCOPE_IDENTITY()
       `);
 

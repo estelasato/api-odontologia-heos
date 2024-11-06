@@ -26,6 +26,9 @@ export class TreatmentDto {
 
   @IsNumber()
   idAnamnese: number;
+
+  @IsNumber()
+  idProcedimento: number;
 }
 
 export class filterTreatmentDto {
@@ -62,6 +65,7 @@ export class TreatmentTypes {
   idPaciente: number;
   idProfissional: number;
   idAnamnese: number;
+  idProcedimento: number;
 
   idUser?: number;
   typeUser?: string;

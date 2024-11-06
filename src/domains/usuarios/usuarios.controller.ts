@@ -21,10 +21,10 @@ export class UsuariosController {
     return this.usuariosService.create(createUsuarioDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.usuariosService.findAll();
-  // }
+  @Get()
+  findAll() {
+    return this.usuariosService.findAll();
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
@@ -36,8 +36,8 @@ export class UsuariosController {
   //   return this.usuariosService.update(+id, updateUsuarioDto);
   // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usuariosService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usuariosService.remove(+id);
+  }
 }

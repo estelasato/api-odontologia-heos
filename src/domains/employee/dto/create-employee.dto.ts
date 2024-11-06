@@ -55,6 +55,11 @@ export class CreateEmployeeDto extends AddressDto{
   @IsOptional()
   @IsNumber()
 	idCidade?: number
+  
+  @IsOptional()
+  @IsString()
+  senha?: string
+  
 }
 
 export class CreateEmployee extends AddressType{
@@ -73,4 +78,5 @@ export class CreateEmployee extends AddressType{
   dtDemissao?: Date
   ativo: number
   idCidade?: number
+  senha?: string
 }

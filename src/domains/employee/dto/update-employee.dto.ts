@@ -60,6 +60,10 @@ export class UpdateEmployeeDto extends AddressDto {
   @IsOptional()
   @IsNumber()
 	idCidade?: number
+
+  @IsOptional()
+  @IsString()
+  senha?: string
 }
 
 export class UpdateEmployee extends AddressType {
@@ -78,4 +82,6 @@ export class UpdateEmployee extends AddressType {
   dtDemissao?: Date
   ativo?: number
   idCidade?: number
+
+  senha?: string
 }

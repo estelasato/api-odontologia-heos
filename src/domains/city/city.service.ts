@@ -19,7 +19,7 @@ export class CityService {
         .input('idEstado', sql.Int, idEstado)
         .input('cidade', sql.VarChar(56), cidade)
         .input('ddd', sql.VarChar(2), ddd)
-        .input('ativo', sql.Bit, ativo)
+        .input('ativo', sql.Bit, 1)
         .input('dtCadastro', date)
         .input('idUser', sql.Int, idUser)
         .input('typeUser', sql.VarChar(10), typeUser)

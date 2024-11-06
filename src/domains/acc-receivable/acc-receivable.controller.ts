@@ -24,6 +24,12 @@ export class AccReceivableController {
     return this.accReceivableService.findOne(+id);
   }
 
+  @Patch(':id')
+  markAsPaid(@Param('id') id: string, @Req () req: any) {
+    const {id: idUser, role: typeUser} = req.usuario;
+    return this.accReceivableService.markAsPaid(+id, idUser, typeUser);
+  }
+
   @Put(':id')
   update(@Param('id') idAcc: string, @Body() data: UpdateAccReceivableDto, @Req() req: any) {
     const {id, role} = req.usuario;

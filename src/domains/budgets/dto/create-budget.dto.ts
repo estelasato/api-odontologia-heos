@@ -1,7 +1,7 @@
 import { IsArray, IsDateString, IsNumber, IsOptional, IsString } from "class-validator";
 import { CreateAccReceivableDto, createAccReceivableDto, FilterAccReceivableDto } from "src/domains/acc-receivable/dto/create-acc-receivable.dto";
 
-export class BudgetTreatmentDto{
+export class BudgetProcedureDto{
   @IsOptional()
   @IsNumber()
   id?: number;
@@ -10,7 +10,7 @@ export class BudgetTreatmentDto{
   // idOrcamento: number;
 
   @IsNumber()
-  idTratamento: number;
+  idProcedimento: number;
 
   @IsOptional()
   @IsString()
@@ -28,9 +28,9 @@ export class BudgetTreatmentDto{
   valor?: number;
 }
 
-export class budgetTreatmentDto{
+export class budgetProcedureDto{
   id?: number;
-  idTratamento: number;
+  idProcedimento: number;
   obs?: string;
   qtd: number;
   total?: number;
@@ -47,7 +47,12 @@ export class CreateBudgetDto {
   status?: string;
 
   @IsNumber()
-  idAnamnese: number;
+  @IsOptional()
+  percDesconto?: number;
+
+  @IsString()
+  @IsOptional()
+  obs?: string;
 
   @IsNumber()
   idPaciente: number;
@@ -55,26 +60,22 @@ export class CreateBudgetDto {
   @IsNumber()
   idProfissional: number;
 
-  @IsNumber()
-  idCondPagamento: number;
-
   @IsArray()
-  tratamentos: BudgetTreatmentDto[];
+  procedimentos: BudgetProcedureDto[];
 
-  @IsArray()
-  contasReceber: CreateAccReceivableDto[];
 }
 
 export class createBudgetDto {
   total?: number;
   status?: string;
-  idAnamnese: number;
+  percDesconto?: number;
+  obs?: string;
   idPaciente: number;
   idProfissional: number;
-  idCondPagamento: number;
+  // idCondPagamento: number;
 
-  tratamentos: budgetTreatmentDto[];
-  contasReceber: createAccReceivableDto[];
+  procedimentos: budgetProcedureDto[];
+  // contasReceber: createAccReceivableDto[];
 
   idUser?: number;
   typeUser?: string;
@@ -87,9 +88,6 @@ export class BudgetFilterDto {
   @IsString()
   @IsOptional()
   status?: string;
-
-  @IsOptional()
-  idAnamnese?: number;
 
   @IsOptional()
   idProfissional?: number;
@@ -105,7 +103,6 @@ export class BudgetFilterDto {
 
 export class budgetFilter {
   idPaciente?: number;
-  idAnamnese?: number;
   idProfissional?: number;
   dataInicial?: Date;
   dataFinal?: Date;

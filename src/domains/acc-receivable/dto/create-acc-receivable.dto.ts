@@ -1,5 +1,11 @@
 import { IsDate, IsNumber, IsOptional, IsString } from "class-validator";
 
+
+export enum ISituation {
+  PENDENTE = 'PENDENTE',
+  PAGO = 'PAGO',
+  CANCELADO = 'CANCELADO',
+}
 export class CreateAccReceivableDto {
   @IsOptional()
   @IsNumber()
@@ -11,7 +17,7 @@ export class CreateAccReceivableDto {
 
   @IsOptional()
   @IsNumber()
-  idOrcamento: number;
+  idServico: number;
 
   @IsOptional()
   @IsNumber()
@@ -47,8 +53,8 @@ export class CreateAccReceivableDto {
   valorRecebido?: number;
 
   @IsOptional()
-  @IsNumber()
-  situacao?: number
+  @IsString()
+  situacao?: ISituation
 
   @IsDate()
   dtVencimento: Date;
@@ -66,7 +72,7 @@ export class createAccReceivableDto {
   // opcionais (vao pegar do orcamento)
   id?: number;
   idPaciente: number;
-  idOrcamento: number;
+  idServico: number;
   idProfissional: number;
 
   idFormaPag: number;
@@ -77,7 +83,7 @@ export class createAccReceivableDto {
   juros?: number;
   valorParcela: number;
   valorRecebido?: number;
-  situacao?: number;
+  situacao?: ISituation;
   dtVencimento: Date;
   dtRecebimento?: Date;
   dtCancelamento?: Date;
@@ -93,7 +99,7 @@ export class FilterAccReceivableDto {
 
   @IsOptional()
   @IsNumber()
-  idOrcamento?: number;
+  idServico?: number;
 
   @IsOptional()
   @IsNumber()
@@ -146,7 +152,7 @@ export class FilterAccReceivableDto {
 
 export class filterAccReceivableDto {
   idPaciente?: number;
-  idOrcamento?: number;
+  idServico?: number;
   idFormaPag?: number;
   idProfissional?: number;
   situacao?: number;

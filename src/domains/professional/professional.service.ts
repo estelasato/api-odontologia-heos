@@ -7,6 +7,7 @@ import {
 import * as sql from 'mssql';
 import { CityService } from '../city/city.service';
 import { Professional, ProfessionalDto } from './dto/professional.dto';
+import { UsuariosService } from '../usuarios/usuarios.service';
 
 @Injectable()
 export class ProfessionalService {
@@ -14,6 +15,7 @@ export class ProfessionalService {
     @Inject('SQL_CONNECTION')
     private readonly sqlConnection: sql.ConnectionPool,
     private readonly cityService: CityService,
+    private readonly usuarioService: UsuariosService,
   ) {}
 
   async create(data: Professional) {
@@ -39,11 +41,12 @@ export class ProfessionalService {
       ativo,
       idUser,
       typeUser,
+      senha
     } = data;
 
     try {
       const date = new Date();
-      await this.sqlConnection
+      const result = await this.sqlConnection
         .request()
         .input('nome', sql.VarChar(50), nome)
         .input('cpfCnpj', sql.VarChar(14), cpfCnpj)
@@ -63,14 +66,26 @@ export class ProfessionalService {
         .input('numero', sql.Int, numero)
         .input('complemento', sql.VarChar(100), complemento)
         .input('idCidade', sql.Int, idCidade)
-        .input('ativo', sql.Bit, ativo)
+        .input('ativo', sql.Bit, 1)
         .input('dtCadastro', sql.DateTime, date)
         .input('idUser', sql.Int, idUser)
         .input('typeUser', sql.VarChar(10), typeUser)
         .input('dtUltAlt', sql.DateTime, date).query`
         INSERT INTO profissionais (idUser, typeUser, nome, cpfCnpj, rg, dtNascimento, email, celular, sexo, estCivil, cro, certificacoes, especialidade, formacoes, cep, logradouro, bairro, numero, complemento, idCidade, ativo, dtCadastro, dtUltAlt)
         VALUES (@idUser, @typeUser, @nome, @cpfCnpj, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @cro, @certificacoes, @especialidade, @formacoes, @cep, @logradouro, @bairro, @numero, @complemento, @idCidade, @ativo, @dtCadastro, @dtUltAlt)
-      `;
+       SELECT * FROM funcionarios WHERE id = SCOPE_IDENTITY()
+        `;
+        const insertedRecord = result.recordset[0];
+
+        if (senha && email) {
+          await this.usuarioService.create({
+            role: 'profissional',
+            email,
+            senha,
+            ativo: ativo,
+            nome,
+          });
+        } 
       return { message: 'Profissional criado com sucesso!' };
     } catch (err) {
       throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
@@ -131,9 +146,27 @@ export class ProfessionalService {
       ativo,
       idUser,
       typeUser,
+      senha
     } = data;
 
     try {
+      const prof = await this.findOne(id);
+      if (prof.error || !prof) {
+        throw new NotFoundException('Profissional não encontrado para atualização');
+      }
+
+      // se alterou o email ou nome altera o login tbm
+      if (prof.email !== email || prof.nome !== nome) {
+        try {
+          if (senha && email) {
+            await this.usuarioService.changePwd({email: prof.email, senhaNova: senha});
+          }
+          await this.usuarioService.update({nome, email});
+        } catch (e) {
+          throw new BadRequestException(`Ocorreu um errro ao atualizar usuario: ${e.message}`);
+        }
+      }
+
       const date = new Date();
       const r = await this.sqlConnection
         .request()

@@ -15,7 +15,7 @@ export class CreateUsuarioDto {
 
   @IsString()
   @IsNotEmpty({ message: 'O campo role é obrigatório.' })
-  role: string;
+  role?: string;
 
   @IsOptional()
   @IsNumber()

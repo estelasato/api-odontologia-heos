@@ -4,7 +4,7 @@ import * as sql from 'mssql';
 export class BudgetTreatmentsType {
   id?: number;
   idOrcamento: number;
-  idTratamento: number;
+  idProcedimento: number;
   obs?: string;
   total?: number;
 
@@ -13,7 +13,7 @@ export class BudgetTreatmentsType {
 }
 
 @Injectable()
-export class BudgetTreatmentsService {
+export class BudgetProcedureService {
   constructor(
     @Inject('SQL_CONNECTION')
     private readonly sqlCon: sql.ConnectionPool,
@@ -25,7 +25,7 @@ export class BudgetTreatmentsService {
         .request()
         .input('id', sql.Int, id)
         .query(
-          `DELETE FROM orc_tratamento WHERE id = @id AND idOrcamento = ${idBudget}`
+          `DELETE FROM orc_procedimento WHERE id = @id AND idOrcamento = ${idBudget}`
         )
     } catch (e) {
       throw new Error(`Ocorreu um erro: ${e.message}`)
@@ -35,21 +35,21 @@ export class BudgetTreatmentsService {
   async findByBudgetId(id: number) {
     try {
       // const result = await this.sqlCon.query(`
-      //   SELECT ot.id as id, ot.idTratamento as idTatamento, ot.idOrcamento as idOrcamento, ot.obs as obs, ot.valor as valor, ot.qtd as qtd, ot.total as total, t.descricao as descricao
-      //   FROM orc_tratamento ot
-      //   INNER JOIN tratamentos t ON ot.idTratamento = t.id
+      //   SELECT ot.id as id, ot.idProcedimento as idTatamento, ot.idOrcamento as idOrcamento, ot.obs as obs, ot.valor as valor, ot.qtd as qtd, ot.total as total, t.descricao as descricao
+      //   FROM orc_procedimento ot
+      //   INNER JOIN tratamentos t ON ot.idProcedimento = t.id
       //   WHERE ot.idOrcamento = ${id}
       // `);
       const result = await this.sqlCon.query(`
-        SELECT orc_tratamento.*, tratamentos.descricao as descricao 
-        FROM orc_tratamento
-        JOIN tratamentos
-        ON tratamentos.id = orc_tratamento.idTratamento 
+        SELECT orc_procedimento.*, procedimentos.nome as nome 
+        FROM orc_procedimento
+        JOIN procedimentos
+        ON procedimentos.id = orc_procedimento.idProcedimento 
         WHERE idOrcamento = ${id}
         `)
       return result.recordset;
     } catch (error) {
-      throw new Error(`Erro ao buscar tratamentos: ${error}`);
+      throw new Error(`Erro ao buscar procedimentos: ${error}`);
     }
   }
 

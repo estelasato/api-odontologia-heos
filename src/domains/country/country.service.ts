@@ -19,7 +19,7 @@ export class CountryService {
         .input('pais', sql.VarChar(56), pais)
         .input('ddi', sql.VarChar(3), ddi)
         .input('sigla', sql.VarChar(3), sigla)
-        .input('ativo', sql.Bit, ativo)
+        .input('ativo', sql.Bit, 1)
         .input('dtCadastro', sql.DateTime, now)
         .input('idUser', sql.Int, idUser)
         .input('typeUser', sql.VarChar(10), typeUser)

@@ -17,6 +17,7 @@ import { ProceduresModule } from "src/domains/procedures/procedures.module";
 import { ProfessionalModule } from "src/domains/professional/professional.module";
 import { ResponsiblePartyModule } from "src/domains/responsible-party/responsible-party.module";
 import { ScheduleModule } from "src/domains/schedule/schedule.module";
+import { ServicesModule } from "src/domains/services/services.module";
 import { StateModule } from "src/domains/state/state.module";
 import { TreatmentsModule } from "src/domains/treatments/treatments.module";
 import { UsuariosModule } from "src/domains/usuarios/usuarios.module";
@@ -46,4 +47,5 @@ export const modules = [
   TokenModule,
   UsuariosModule,
   ProceduresModule,
+  ServicesModule,
 ]
