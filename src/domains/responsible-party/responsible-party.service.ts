@@ -43,6 +43,7 @@ export class ResponsiblePartyService {
       `;
       return {message: 'Responsável criado com sucesso!'}
     } catch (err) {
+      console.log(err)
       throw new BadRequestException(`Ocorreu um errro: ${err.message}`);
     }
   }

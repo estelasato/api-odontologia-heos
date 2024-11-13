@@ -44,7 +44,6 @@ export class EmployeeService {
       senha
     } = data;
     const date = new Date();
-
     try {
       // // Verifica duplicidade de CPF, Email e PIS
       // const existingEmployee = await this.sqlConnection
@@ -82,12 +81,12 @@ export class EmployeeService {
         .input('numero', sql.Int, numero)
         .input('complemento', sql.VarChar(100), complemento)
         .input('dtAdmissao', sql.Date, dtAdmissao)
-        .input('dtDemissao', sql.Date, dtDemissao)
+        .input('dtDemissao', dtDemissao)
         .input('idCidade', sql.Int, idCidade)
         .input('dtCadastro', date)
         .input('dtUltAlt', date).query`
-          INSERT INTO funcionarios (nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, ativo, cargo, salario, pis, dtAdmissao, dtDemissao, idCidade, dtCadastro, dtUltAlt)
-          values (@nome, @cpf, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @ativo, @cargo, @salario, @pis, @dtAdmissao, @dtDemissao, @idCidade, @dtCadastro, @dtUltAlt)
+          INSERT INTO funcionarios (nome, cpf, rg, dtNascimento, email, celular, sexo, estCivil, ativo, cargo, salario, pis, dtAdmissao, dtDemissao, idCidade, dtCadastro, dtUltAlt, cep, logradouro, bairro, numero, complemento)
+          values (@nome, @cpf, @rg, @dtNascimento, @email, @celular, @sexo, @estCivil, @ativo, @cargo, @salario, @pis, @dtAdmissao, @dtDemissao, @idCidade, @dtCadastro, @dtUltAlt, @cep, @logradouro, @bairro, @numero, @complemento);
           SELECT * FROM funcionarios WHERE id = SCOPE_IDENTITY()
           `;
       const insertedRecord = result.recordset[0];
@@ -208,7 +207,7 @@ export class EmployeeService {
         .input('salario', sql.Decimal(18, 2), salario)
         .input('pis', sql.VarChar(11), pis)
         .input('dtAdmissao', sql.Date, dtAdmissao)
-        .input('dtDemissao', sql.Date, dtDemissao)
+        .input('dtDemissao', dtDemissao)
         .input('idCidade', sql.Int, idCidade)
         .input('cep', sql.VarChar(8), cep)
         .input('logradouro', sql.VarChar(50), logradouro)

@@ -34,7 +34,7 @@ export class ServicesService {
         .input('idUser', sql.Int, idUser)
         .input('typeUser', sql.VarChar, typeUser)
         .input('valor', sql.Decimal, valor)
-        .input('status', sql.VarChar, status)
+        .input('status', sql.VarChar, 'EM ANDAMENTO')
         .input('obs', sql.VarChar, obs)
         .input('dtCadastro', date)
         .input('dtUltAlt', date).query(`

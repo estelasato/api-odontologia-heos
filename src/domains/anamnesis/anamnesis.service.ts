@@ -349,6 +349,7 @@ export class AnamnesisService {
       if (allergies && allergies.length > 0) {
         allergies?.map(async(a) => await this.allergiesAnamnese.delete(a.id, id, a.idAlergia));
       } 
+
       await this.sqlCon.request().query(`
           DELETE FROM anamneses WHERE ID = ${id}
         `);

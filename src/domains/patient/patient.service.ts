@@ -145,30 +145,30 @@ export class PatientService {
         return { id: r.id, nome: r.nome, celular: r.celular, cpf: r.cpf };
       });
 
-      const habitos = await this.sqlConnection
-        .request()
-        .input('idPaciente', sql.Int, id).query`
-          select h.id, h.nome, h.descricao
-          FROM hab_paciente hp
-          INNER JOIN habitos h on h.id = hp.idHabito
-          WHERE hp.idPaciente = ${id}
-        `;
-      const listHabitos = habitos?.recordset?.map((h) => {
-        return { id: h.id, nome: h.nome, descricao: h.descricao };
-      });
-
+      // const habitos = await this.sqlConnection
+      //   .request()
+      //   .input('idPaciente', sql.Int, id).query`
+      //     select h.id, h.nome, h.descricao
+      //     FROM hab_paciente hp
+      //     INNER JOIN habitos h on h.id = hp.idHabito
+      //     WHERE hp.idPaciente = ${id}
+      //   `;
+      // const listHabitos = habitos?.recordset?.map((h) => {
+      //   return { id: h.id, nome: h.nome, descricao: h.descricao };
+      // });
+      // console.log(r, listResponsaveis, listHabitos)
       if (r.recordset.length > 0) {
         return {
           ...r.recordset[0],
           ...cep,
           responsaveis: [...listResponsaveis],
-          habitos: [...listHabitos],
+          // habitos: [...listHabitos],
         };
       } else {
         return { error: 'Paciente não encontrado!' };
       }
     } catch (e) {
-      return e;
+      throw new BadRequestException('Erro ao encontrar paciente', e.message);
     }
   }
 
@@ -252,23 +252,23 @@ export class PatientService {
 
       //TODO: AJUSTAR EDIÇÃO DA ASSOCIATIVA DE HÁBITOS
       // remove as associações
-      await transaction.request().input('idPaciente', sql.Int, id)
-        .query`DELETE FROM hab_paciente WHERE idPaciente = @idPaciente`;
+      // await transaction.request().input('idPaciente', sql.Int, id)
+      //   .query`DELETE FROM hab_paciente WHERE idPaciente = @idPaciente`;
 
-      if (habitos || habitos?.length > 0) {
-        // criando tabela associativa
-        for (const idHab of habitos) {
-          await transaction
-            .request()
-            .input('idPaciente', sql.Int, id)
-            .input('idHabito', sql.Int, idHab.id)
-            .input('dtCadastro', sql.DateTime, date)
-            .input('dtUltAlt', sql.DateTime, date).query`
-              INSERT INTO hab_paciente (idPaciente, idHabito, dtCadastro, dtUltAlt) 
-              VALUES (@idPaciente, @idHabito,@dtCadastro, @dtUltAlt)
-            `;
-        }
-      }
+      // if (habitos || habitos?.length > 0) {
+      //   // criando tabela associativa
+      //   for (const idHab of habitos) {
+      //     await transaction
+      //       .request()
+      //       .input('idPaciente', sql.Int, id)
+      //       .input('idHabito', sql.Int, idHab.id)
+      //       .input('dtCadastro', sql.DateTime, date)
+      //       .input('dtUltAlt', sql.DateTime, date).query`
+      //         INSERT INTO hab_paciente (idPaciente, idHabito, dtCadastro, dtUltAlt) 
+      //         VALUES (@idPaciente, @idHabito,@dtCadastro, @dtUltAlt)
+      //       `;
+      //   }
+      // }
 
       await transaction.commit();
 
